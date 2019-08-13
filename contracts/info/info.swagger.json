@@ -1,0 +1,84 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "info/info.proto",
+    "version": "version not set"
+  },
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/health": {
+      "get": {
+        "summary": "Get a health information for the service",
+        "operationId": "GetHealth",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/infoHealth"
+            }
+          }
+        },
+        "tags": [
+          "Info"
+        ]
+      }
+    },
+    "/v1/info": {
+      "get": {
+        "summary": "Get an information about the service",
+        "operationId": "GetInfo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/infoReport"
+            }
+          }
+        },
+        "tags": [
+          "Info"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "infoHealth": {
+      "type": "object",
+      "properties": {
+        "alive": {
+          "type": "boolean",
+          "format": "boolean",
+          "title": "Health state"
+        }
+      },
+      "title": "A Health report about the service"
+    },
+    "infoReport": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "string",
+          "title": "Version of the service"
+        },
+        "date": {
+          "type": "string",
+          "title": "Build date of the service"
+        },
+        "repo": {
+          "type": "string",
+          "title": "Repository name"
+        }
+      },
+      "title": "A Report about the service"
+    }
+  }
+}
