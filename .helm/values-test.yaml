@@ -42,61 +42,10 @@ image:
   ##
   pullPolicy: Always
 
-ingress:
-  ## If true, Ingress will be created
-  ##
-  enabled: false
-  tls:
-    enabled: false
-
-  ## Prefix for API (Example: /api/v1/)
-  ##
-  prefix: /
-
-  ## Ingress annotations (e.g. `Let's encrypt` annotations to generating certs)
-  ##
-  annotations:
-    ## kubernetes.io/ingress.class: nginx
-    ## kubernetes.io/tls-acme: 'true'
-    prometheus.io/probe: 'true'
-
-  ## Ingress host feature allow access to service through host
-  ## example: https://hostname
-  ## Must be provided if Ingress is enabled
-  ##
-  hostBased:
-    hosts:
-    - grpc.op-dev.net
-
-    ## Ingress TLS configuration
-    ## Secrets must be manually created in the namespace
-    ##
-    tls:
-    - secretName: op-dev.net-secret
-      hosts:
-      - grpc.op-dev.net
-
-  # ## Ingress path feature allow access to service through path
-  # ## example: https://hostname/namespace/servicename
-  # ## Must be provided if Ingress is enabled
-  # ##
-  # pathBased:
-  #   hosts:
-  #   - services.op-dev.net
-
-  #   ## Ingress TLS configuration
-  #   ## Secrets must be manually created in the namespace
-  #   ## except of case when annotation `kubernetes.io/tls-acme: 'true'` is present
-  #   ##
-  #   tls:
-  #   - secretName: op-dev.net-secret
-  #     hosts:
-  #     - services.op-dev.net
-
-## Ingress Route (Contour) - custom Ingress controller with Envoy
+## Ingress (Contour) - Ingress controller with Envoy
 ## to proxy all services via 1 IP address.
 ##
-ingressRoute:
+ingress:
   ## If true, Ingress will be created
   ##
   enabled: true
@@ -134,24 +83,7 @@ service:
   ## For GKE - LoadBalancer
   ## elsewhere - ClusterIP
   ##
-  type: LoadBalancer
-
-  ## Static IP of load balancer
-  ##
-  loadBalancerIP: "35.204.249.1"
-
-  ## IP ranges with access to the service (via load balancer)
-  ## By default, all have access to it (if the list is empty)
-  ##
-  loadBalancerSourceRanges:
-  - 10.0.0.0/8 # Internal network
-  - 109.72.83.32/32 # VPN Openprovider
-  - 185.107.225.16/32 # OpenVPN Openprovider
-  - 5.128.36.134/32 # NSK office
-  - 213.236.28.3/32 # idolzhikov (spain home 1)
-  - 185.96.235.53/32 # idolzhikov (spain home 2)
-  - 94.180.117.53/32 # vsaveliev (home)
-  - 185.103.159.160/32 # vsaveliev-001.op-dev.net (for development)
+  type: ClusterIP
 
   ## Service annotations (e.g. Prometheus annotations)
   ##
@@ -160,12 +92,12 @@ service:
     prometheus.io/probe-path: '/v1alpha/health'
     prometheus.io/probe-scheme: 'https'
 
-  ## gRPC TLS attributes
+  ## gRPC attributes
   ##
-  grpcTLS:
-    ## gRPC TLS port
+  grpc:
+    ## gRPC port
     ##
-    port: 8001
+    port: 8000
 
   ## Service information
   ##
@@ -173,6 +105,9 @@ service:
     ## Pod exposed info/health port
     ##
     port: 8080
+    ## Service statistics
+    ##
+    statistics: false
 
   ## Logger format and level
   ##
@@ -195,7 +130,7 @@ livenessProbe:
   failureThreshold: 3
 
 readinessProbe:
-  ## Rediness Probe
+  ## Readiness Probe
   ## If enabled k8s check http end-point /readyz for "Ok" status 200
   ##
   enabled: true
