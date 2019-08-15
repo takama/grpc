@@ -66,36 +66,67 @@ ingress:
   ##
   hostBased:
     hosts:
-    - grpc.example.net
+    - grpc.op-dev.net
 
     ## Ingress TLS configuration
     ## Secrets must be manually created in the namespace
     ##
     tls:
-    - secretName: grpc.example.net-secret
+    - secretName: op-dev.net-secret
       hosts:
-      - grpc.example.net
+      - grpc.op-dev.net
 
   # ## Ingress path feature allow access to service through path
   # ## example: https://hostname/namespace/servicename
   # ## Must be provided if Ingress is enabled
   # ##
-  pathBased:
-    hosts:
-    - services.example.net
+  # pathBased:
+  #   hosts:
+  #   - services.op-dev.net
 
-    ## Ingress TLS configuration
-    ## Secrets must be manually created in the namespace
-    ## except of case when annotatoon `kubernetes.io/tls-acme: 'true'` is present
+  #   ## Ingress TLS configuration
+  #   ## Secrets must be manually created in the namespace
+  #   ## except of case when annotation `kubernetes.io/tls-acme: 'true'` is present
+  #   ##
+  #   tls:
+  #   - secretName: op-dev.net-secret
+  #     hosts:
+  #     - services.op-dev.net
+
+## Ingress Route (Contour) - custom Ingress controller with Envoy
+## to proxy all services via 1 IP address.
+##
+ingressRoute:
+  ## If true, Ingress will be created
+  ##
+  enabled: true
+
+  ## TLS configs
+  ##
+  tls:
     ##
-    tls:
-    - secretName: services.example.net-secret
-      hosts:
-      - services.example.net
+    enabled: true
+    ##
+    secretName: op-dev.net-secret
+
+  ## Annotations
+  ##
+  annotations:
+    contour.heptio.com/ingress.class: contour
+    contour.heptio.com/tls-minimum-protocol-version: TLSv1_2
+    kubernetes.io/ingress.allow-http: false
+
+  ## Ingress route hosts
+  ##
+  hosts:
+    ## gRPC service host
+    - name: grpc
+      host: grpc.op-dev.net
+      path: /
+      port: 8000
 
 service:
-  ## App container name
-  ##
+  ## App name service
   name: grpc
 
   ## Service Type
@@ -107,28 +138,34 @@ service:
 
   ## Static IP of load balancer
   ##
-  # loadBalancerIP: "133.133.133.133"
+  loadBalancerIP: "35.204.249.1"
 
   ## IP ranges with access to the service (via load balancer)
   ## By default, all have access to it (if the list is empty)
   ##
-  # loadBalancerSourceRanges:
-  # - 100.100.100.32/32 # VPN
+  loadBalancerSourceRanges:
+  - 10.0.0.0/8 # Internal network
+  - 109.72.83.32/32 # VPN Openprovider
+  - 185.107.225.16/32 # OpenVPN Openprovider
+  - 5.128.36.134/32 # NSK office
+  - 213.236.28.3/32 # idolzhikov (spain home 1)
+  - 185.96.235.53/32 # idolzhikov (spain home 2)
+  - 94.180.117.53/32 # vsaveliev (home)
+  - 185.103.159.160/32 # vsaveliev-001.op-dev.net (for development)
 
   ## Service annotations (e.g. Prometheus annotations)
   ##
   annotations:
-    prometheus.io/scrape: 'true'
     prometheus.io/probe: 'true'
-    prometheus.io/port: '8080'
-    prometheus.io/path: '/metrics'
+    prometheus.io/probe-path: '/v1alpha/health'
+    prometheus.io/probe-scheme: 'https'
 
-  ## gRPC protocol attributes
+  ## gRPC TLS attributes
   ##
-  grpc:
-    ## gRPC exposed port
+  grpcTLS:
+    ## gRPC TLS port
     ##
-    port: 8000
+    port: 8001
 
   ## Service information
   ##
@@ -136,10 +173,6 @@ service:
     ## Pod exposed info/health port
     ##
     port: 8080
-
-    ## Include a statistics in information details
-    ##
-    statistics: true
 
   ## Logger format and level
   ##
