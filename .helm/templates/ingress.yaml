@@ -21,7 +21,7 @@ metadata:
     component: "{{ $serviceName }}"
     heritage: "{{ $release.Service }}"
     release: "{{ $release.Name }}"
-  name: {{ $name }}-{{ $service.name }}
+  name: {{ $name }}
 spec:
   virtualhost:
     fqdn: {{ $service.host }}
