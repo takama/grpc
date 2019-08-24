@@ -4,7 +4,7 @@ PROTOC_RUN = docker run --rm -v $(shell pwd):/contracts -w /contracts $(PROTOC_I
 
 all: generate
 
-generate: info
+generate: info echo
 
 info:
 	@echo "+ $@"
@@ -12,7 +12,13 @@ info:
 	@$(PROTOC_RUN) --grpc-gateway_out=logtostderr=true,paths=source_relative:. info/info.proto
 	@$(PROTOC_RUN) --swagger_out=logtostderr=true:. info/info.proto
 
+echo:
+	@echo "+ $@"
+	@$(PROTOC_RUN) --go_out=plugins=grpc,paths=source_relative:. echo/echo.proto
+	@$(PROTOC_RUN) --grpc-gateway_out=logtostderr=true,paths=source_relative:. echo/echo.proto
+	@$(PROTOC_RUN) --swagger_out=logtostderr=true:. echo/echo.proto
 
 .PHONY: all \
 	info \
+	echo \
 	generate
