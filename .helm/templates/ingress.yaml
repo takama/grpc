@@ -32,7 +32,7 @@ spec:
   routes:
     - match: {{ $service.path }}
       services:
-        - name: {{ $serviceName }}
+        - name: {{ $service.name }}
           port: {{ $service.port }}
 
 {{- end }}
