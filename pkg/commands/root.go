@@ -42,12 +42,17 @@ func init() {
 	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is config/default.conf)")
 	RootCmd.PersistentFlags().Int("log-level", int(config.DefaultLoggerLevel), "Logger level (0 - debug, 1 - info, ...)")
 	RootCmd.PersistentFlags().String("log-format", logger.TextFormatter.String(), "Logger format: txt, json")
+	RootCmd.PersistentFlags().Bool(
+		"insecure", config.DefaultClientInsecure, "Used insecured connection to service")
 	helper.LogF("Flag error",
 		viper.BindPFlag("logger.level", RootCmd.PersistentFlags().Lookup("log-level")))
 	helper.LogF("Flag error",
 		viper.BindPFlag("logger.format", RootCmd.PersistentFlags().Lookup("log-format")))
+	helper.LogF("Flag error",
+		viper.BindPFlag("client.insecure", RootCmd.PersistentFlags().Lookup("insecure")))
 	helper.LogF("Env error", viper.BindEnv("logger.level"))
 	helper.LogF("Env error", viper.BindEnv("logger.format"))
+	helper.LogF("Env error", viper.BindEnv("client.insecure"))
 }
 
 // initConfig reads in config file
