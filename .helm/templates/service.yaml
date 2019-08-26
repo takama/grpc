@@ -8,31 +8,25 @@ metadata:
     component: "{{ .Values.service.name }}"
     heritage: "{{ .Release.Service }}"
     release: "{{ .Release.Name }}"
+  {{- if .Values.service.annotations }}
   annotations:
   {{- range $key, $value := .Values.service.annotations }}
     {{ $key }}: {{ $value | quote }}
   {{- end }}
+  {{- end }}
 spec:
   ports:
+  {{- if .Values.service.grpc.port }}
   - port: {{ .Values.service.grpc.port }}
     targetPort: {{ .Values.service.grpc.port }}
     protocol: TCP
     name: grpc
+  {{- end }}
   - port: {{ .Values.service.info.port }}
     targetPort: {{ .Values.service.info.port }}
     protocol: TCP
     name: info
   selector:
-    app: {{ template "fullname" . }}
+    app: {{ .Values.service.name }}-{{ .Release.Namespace }}
   type: "{{ .Values.service.type }}"
-  {{ if eq "LoadBalancer" .Values.service.type }}
-  {{ if .Values.service.loadBalancerIP }}
-  loadBalancerIP: "{{ .Values.service.loadBalancerIP }}"
-  {{- end }}
-  {{ if .Values.service.loadBalancerSourceRanges }}
-  loadBalancerSourceRanges:
-  {{- range $IPrange := .Values.service.loadBalancerSourceRanges }}
-  - {{ $IPrange }}
-  {{- end }}
-  {{- end }}
-  {{- end }}
+  clusterIP: None

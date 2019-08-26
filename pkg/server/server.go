@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net"
 
+	"github.com/takama/grpc/contracts/echo"
 	"github.com/takama/grpc/contracts/info"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
@@ -16,6 +17,7 @@ type Server struct {
 	log *zap.Logger
 	srv *grpc.Server
 	is  *infoServer
+	es  *echoServer
 }
 
 // New creates a new core server
@@ -24,6 +26,7 @@ func New(ctx context.Context, cfg *Config, log *zap.Logger) (*Server, error) {
 		cfg: cfg,
 		log: log,
 		is:  new(infoServer),
+		es:  &echoServer{log: log},
 	}, nil
 }
 
@@ -43,6 +46,7 @@ func (s *Server) Run(ctx context.Context) error {
 	// Register gRPC server
 	s.srv = grpc.NewServer()
 	info.RegisterInfoServer(s.srv, s.is)
+	echo.RegisterEchoServer(s.srv, s.es)
 
 	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", s.cfg.Port))
 	if err != nil {
