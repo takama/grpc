@@ -34,7 +34,7 @@ spec:
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         ports:
         - containerPort: {{ .Values.service.grpc.port }}
-          name: http2
+          name: grpc
         - containerPort: {{ .Values.service.info.port }}
           name: info
         env:

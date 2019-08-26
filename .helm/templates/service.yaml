@@ -20,7 +20,7 @@ spec:
   - port: {{ .Values.service.grpc.port }}
     targetPort: {{ .Values.service.grpc.port }}
     protocol: TCP
-    name: http2
+    name: grpc
   {{- end }}
   - port: {{ .Values.service.info.port }}
     targetPort: {{ .Values.service.info.port }}
