@@ -30,10 +30,10 @@ spec:
             podAffinityTerm:
               labelSelector:
                 matchExpressions:
-                - key: component
+                - key: app
                   operator: In
                   values:
-                  - "{{ .Values.service.name }}"
+                  - "{{ template "fullname" . }}"
               topologyKey: kubernetes.io/hostname
       {{- if .Values.image.pullSecretName }}
       imagePullSecrets:
