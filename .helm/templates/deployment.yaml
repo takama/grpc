@@ -26,15 +26,13 @@ spec:
       affinity:
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
-          - weight: 100
-            podAffinityTerm:
-              labelSelector:
-                matchExpressions:
-                - key: app
-                  operator: In
-                  values:
-                  - "{{ template "fullname" . }}"
-              topologyKey: kubernetes.io/hostname
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - "{{ template "fullname" . }}"
+            topologyKey: kubernetes.io/hostname
       {{- if .Values.image.pullSecretName }}
       imagePullSecrets:
       - name: {{ .Values.image.pullSecretName }}
