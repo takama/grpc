@@ -34,7 +34,10 @@ var pingCmd = &cobra.Command{
 		if err := client.Ping(
 			&cfg.Client, log,
 			cmd.Flag("message").Value.String(), count,
-			boot.TLSOption(cfg.Client.Host, cfg.Client.Insecure),
+			boot.PrepareDialOptions(
+				cfg.Client.Host, cfg.Client.Insecure,
+				cfg.Client.WaitForReady, cfg.Client.BackoffDelay,
+			)...,
 		); err != nil {
 			log.Fatal("Get info error", zap.Error(err))
 		}

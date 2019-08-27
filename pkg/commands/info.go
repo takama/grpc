@@ -25,7 +25,10 @@ Use --file or -f to specify JSON data file with batch requests`,
 		// Runs the domain checker
 		if err := client.Info(
 			&cfg.Client, log,
-			boot.TLSOption(cfg.Client.Host, cfg.Client.Insecure),
+			boot.PrepareDialOptions(
+				cfg.Client.Host, cfg.Client.Insecure,
+				cfg.Client.WaitForReady, cfg.Client.BackoffDelay,
+			)...,
 		); err != nil {
 			log.Fatal("Get info error", zap.Error(err))
 		}
