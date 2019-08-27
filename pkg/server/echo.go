@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/takama/grpc/contracts/echo"
 
@@ -28,6 +29,7 @@ func (es echoServer) Ping(ctx context.Context, in *echo.Request) (*echo.Response
 	if err != nil {
 		es.log.Error("ping: send header", zap.Error(err))
 	}
+	time.Sleep(time.Millisecond * 200)
 	return &echo.Response{Content: in.Content}, nil
 }
 
