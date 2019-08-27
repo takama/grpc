@@ -1,6 +1,8 @@
 package config
 
 import (
+	"time"
+
 	"github.com/takama/grpc/pkg/client"
 	"github.com/takama/grpc/pkg/info"
 	"github.com/takama/grpc/pkg/logger"
@@ -19,12 +21,14 @@ const (
 
 	DefaultConfigPath = "config/default.conf"
 
-	DefaultClientPort     = 8000
-	DefaultServerPort     = 8000
-	DefaultInfoPort       = 8080
-	DefaultClientInsecure = false
-	DefaultInfoStatistics = true
-	DefaultLoggerLevel    = logger.LevelInfo
+	DefaultClientPort         = 8000
+	DefaultServerPort         = 8000
+	DefaultInfoPort           = 8080
+	DefaultClientInsecure     = false
+	DefaultClientWaitForReady = false
+	DefaultClientBackoffDelay = 5
+	DefaultInfoStatistics     = true
+	DefaultLoggerLevel        = logger.LevelInfo
 )
 
 // Config -- Base config structure
@@ -39,9 +43,11 @@ type Config struct {
 func New() (*Config, error) {
 	cfg := &Config{
 		Client: client.Config{
-			Host:     ClientServiceName,
-			Port:     DefaultClientPort,
-			Insecure: DefaultClientInsecure,
+			Host:         ClientServiceName,
+			Port:         DefaultClientPort,
+			Insecure:     DefaultClientInsecure,
+			WaitForReady: DefaultClientWaitForReady,
+			BackoffDelay: time.Second * DefaultClientBackoffDelay,
 		},
 		Server: server.Config{
 			Port: DefaultServerPort,
