@@ -2,6 +2,7 @@ package boot
 
 import (
 	"crypto/tls"
+	"time"
 
 	"github.com/takama/grpc/pkg/config"
 	"github.com/takama/grpc/pkg/helper"
@@ -22,15 +23,29 @@ func Setup() (*config.Config, *zap.Logger) {
 	return cfg, log
 }
 
-// TLSOption gives TLS secure/insecure option
-func TLSOption(host string, insecure bool) grpc.DialOption {
-	option := grpc.WithTransportCredentials(credentials.NewTLS(
+// PrepareDialOptions gives options that manage TLS options,
+// retries and exponential backoff in calls to a service
+func PrepareDialOptions(
+	host string, insecure, waitForReady bool, maxDelay time.Duration,
+	opts ...grpc.DialOption,
+) []grpc.DialOption {
+	tlsOption := grpc.WithTransportCredentials(credentials.NewTLS(
 		&tls.Config{
 			ServerName: host,
 		},
 	))
 	if insecure {
-		option = grpc.WithInsecure()
+		tlsOption = grpc.WithInsecure()
 	}
-	return option
+	return append(opts,
+		tlsOption,
+		grpc.WithDefaultCallOptions(
+			grpc.WaitForReady(waitForReady),
+		),
+		grpc.WithBackoffConfig(
+			grpc.BackoffConfig{
+				MaxDelay: maxDelay,
+			},
+		),
+	)
 }
