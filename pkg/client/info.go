@@ -25,7 +25,7 @@ func Info(cfg *Config, log *zap.Logger, opts ...grpc.DialOption) error {
 		}
 	}(log)
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*15)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 
 	info, err := info.NewInfoClient(conn).GetInfo(ctx, new(empty.Empty))
