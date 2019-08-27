@@ -23,6 +23,18 @@ spec:
       labels:
         app: {{ template "fullname" . }}
     spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: component
+                  operator: In
+                  values:
+                  - "{{ .Values.service.name }}"
+              topologyKey: kubernetes.io/hostname
       {{- if .Values.image.pullSecretName }}
       imagePullSecrets:
       - name: {{ .Values.image.pullSecretName }}
