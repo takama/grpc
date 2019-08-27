@@ -25,7 +25,7 @@ func Ping(cfg *Config, log *zap.Logger, message string, count int, opts ...grpc.
 		}
 	}(log)
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*15)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*300)
 	defer cancel()
 
 	metadata := new(metadata.MD)
