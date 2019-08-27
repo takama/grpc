@@ -42,10 +42,6 @@ func PrepareDialOptions(
 		grpc.WithDefaultCallOptions(
 			grpc.WaitForReady(waitForReady),
 		),
-		grpc.WithBackoffConfig(
-			grpc.BackoffConfig{
-				MaxDelay: maxDelay,
-			},
-		),
+		grpc.WithBackoffMaxDelay(maxDelay),
 	)
 }
