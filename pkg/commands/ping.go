@@ -3,7 +3,9 @@
 package commands
 
 import (
+	"context"
 	"strconv"
+	"time"
 
 	"github.com/takama/grpc/pkg/boot"
 	"github.com/takama/grpc/pkg/client"
@@ -30,9 +32,12 @@ var pingCmd = &cobra.Command{
 			count = v
 		}
 
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second*300)
+		defer cancel()
+
 		// Create new client
 		cl, err := client.New(
-			&cfg.Client, log,
+			ctx, &cfg.Client, log,
 			boot.PrepareDialOptions(
 				cfg.Client.Host, cfg.Client.Insecure,
 				cfg.Client.WaitForReady, cfg.Client.BackOffDelay,
@@ -42,10 +47,12 @@ var pingCmd = &cobra.Command{
 			log.Fatal("Get connection error", zap.Error(err))
 		}
 		// Ping command
-		if err := cl.Ping(cmd.Flag("message").Value.String(), count); err != nil {
+		if err := cl.Ping(ctx, cmd.Flag("message").Value.String(), count); err != nil {
 			log.Fatal("Ping error", zap.Error(err))
 		}
-		cl.Shutdown()
+		if err := cl.Shutdown(ctx); err != nil {
+			log.Fatal("Close connection error", zap.Error(err))
+		}
 	},
 }
 

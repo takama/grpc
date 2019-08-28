@@ -3,7 +3,6 @@ package client
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"github.com/takama/grpc/contracts/echo"
 	"github.com/takama/grpc/contracts/info"
@@ -22,7 +21,7 @@ type Client struct {
 }
 
 // New gives a Client
-func New(cfg *Config, log *zap.Logger, opts ...grpc.DialOption) (*Client, error) {
+func New(ctx context.Context, cfg *Config, log *zap.Logger, opts ...grpc.DialOption) (*Client, error) {
 	// Set up a connection to the server.
 	conn, err := grpc.Dial(fmt.Sprintf("%s:%d", cfg.Host, cfg.Port), opts...)
 	if err != nil {
@@ -45,11 +44,8 @@ func New(cfg *Config, log *zap.Logger, opts ...grpc.DialOption) (*Client, error)
 }
 
 // Info command
-func (c *Client) Info() error {
+func (c *Client) Info(ctx context.Context) error {
 	// Set up a connection to the server.
-
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
-	defer cancel()
 
 	info, err := info.NewInfoClient(c.conn).GetInfo(ctx, new(empty.Empty))
 	if err != nil {
@@ -67,10 +63,7 @@ func (c *Client) Info() error {
 }
 
 // Ping command
-func (c *Client) Ping(message string, count int) error {
-
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*300)
-	defer cancel()
+func (c *Client) Ping(ctx context.Context, message string, count int) error {
 
 	metadata := new(metadata.MD)
 
@@ -93,10 +86,7 @@ func (c *Client) Ping(message string, count int) error {
 }
 
 // Reverse command
-func (c *Client) Reverse(message string, count int) error {
-
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*300)
-	defer cancel()
+func (c *Client) Reverse(ctx context.Context, message string, count int) error {
 
 	metadata := new(metadata.MD)
 
@@ -119,8 +109,10 @@ func (c *Client) Reverse(message string, count int) error {
 }
 
 // Shutdown closes active Client connections
-func (c *Client) Shutdown() {
+func (c *Client) Shutdown(ctx context.Context) error {
 	if err := c.conn.Close(); err != nil {
 		c.log.Error("Connection close error:", zap.Error(err))
 	}
+
+	return nil
 }
