@@ -61,6 +61,7 @@ func Run(cfg *config.Config) error {
 	// Setup operator with info/health-check server, core server and data store
 	operator := system.NewOperator(
 		infoServer,
+		cl,
 		srv,
 	)
 
