@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/takama/grpc/contracts/echo"
+	"github.com/takama/grpc/pkg/client"
 
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
@@ -14,6 +15,7 @@ import (
 )
 
 type echoServer struct {
+	cl  *client.Client
 	log *zap.Logger
 }
 
@@ -36,22 +38,24 @@ func (es echoServer) Ping(ctx context.Context, in *echo.Request) (*echo.Response
 // Reverse the content of the request
 func (es echoServer) Reverse(ctx context.Context, in *echo.Request) (*echo.Response, error) {
 	es.log.Info("reverse:", zap.String("Handling reverse request", fmt.Sprintf("[%v] with context %v", in, ctx)))
+
+	md := new(metadata.MD)
+
+	cl := echo.NewEchoClient(es.cl.Connection())
+	response, err := cl.Ping(ctx, &echo.Request{
+		Content: in.Content}, grpc.Header(md))
+	if err != nil {
+		return response, err
+	}
+
 	hostname, err := os.Hostname()
 	if err != nil {
-		es.log.Error("reverse: Unable to get hostname", zap.Error(err))
+		es.log.Error("reverse ping: Unable to get hostname", zap.Error(err))
 		hostname = ""
 	}
 	err = grpc.SendHeader(ctx, metadata.Pairs("hostname", hostname))
 	if err != nil {
-		es.log.Error("ping: send header", zap.Error(err))
+		es.log.Error("reverse ping: send header", zap.Error(err))
 	}
-	return &echo.Response{Content: reverse(in.Content)}, nil
-}
-
-func reverse(input string) string {
-	runes := []rune(input)
-	for i, j := 0, len(runes)-1; i < len(runes)/2; i, j = i+1, j-1 {
-		runes[i], runes[j] = runes[j], runes[i]
-	}
-	return string(runes)
+	return &echo.Response{Content: fmt.Sprintf("%s from %v", response.Content, md.Get("hostname"))}, nil
 }
