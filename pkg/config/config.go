@@ -26,7 +26,7 @@ const (
 	DefaultInfoPort           = 8080
 	DefaultClientInsecure     = false
 	DefaultClientWaitForReady = false
-	DefaultClientBackoffDelay = 5
+	DefaultClientBackOffDelay = 5 * time.Second
 	DefaultInfoStatistics     = true
 	DefaultLoggerLevel        = logger.LevelInfo
 )
@@ -47,7 +47,7 @@ func New() (*Config, error) {
 			Port:         DefaultClientPort,
 			Insecure:     DefaultClientInsecure,
 			WaitForReady: DefaultClientWaitForReady,
-			BackoffDelay: time.Second * DefaultClientBackoffDelay,
+			BackOffDelay: DefaultClientBackOffDelay,
 		},
 		Server: server.Config{
 			Port: DefaultServerPort,
