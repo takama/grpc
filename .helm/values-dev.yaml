@@ -110,6 +110,18 @@ service:
     ##
     statistics: false
 
+  ## Client connection to the service
+  ##
+  client:
+    host: grpc.op-dev.net
+    port: 443
+    ## use TLS or not
+    insecure: false
+    ## wait until gRPC stream will be ready
+    waitForReady: true
+    ## use exponential back off with maximum delay in nanoseconds
+    backOffDelay: 5000000000
+
   ## Logger format and level
   ##
   logger:

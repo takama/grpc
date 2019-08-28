@@ -11,6 +11,13 @@ metadata:
 data:
   default.conf: |-
     {
+      "client": {
+          "host": "{{ .Values.service.client.host }}",
+          "port": {{ .Values.service.client.port }},
+          "insecure": {{ .Values.service.client.insecure }},
+          "waitForReady": {{ .Values.service.client.waitForReady }},
+          "backOffDelay": {{ .Values.service.client.backOffDelay }}
+      },
       "server": {
         "port": {{ .Values.service.grpc.port }}
       },
