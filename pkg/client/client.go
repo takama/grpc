@@ -28,6 +28,14 @@ func New(cfg *Config, log *zap.Logger, opts ...grpc.DialOption) (*Client, error)
 	if err != nil {
 		return nil, err
 	}
+	log.Info(
+		"Connected with config:",
+		zap.String("host", cfg.Host),
+		zap.Int("port", cfg.Port),
+		zap.Bool("insecure", cfg.Insecure),
+		zap.Bool("wait for ready", cfg.WaitForReady),
+		zap.Any("back off delay", cfg.BackOffDelay),
+	)
 
 	return &Client{
 		cfg:  cfg,
