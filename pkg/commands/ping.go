@@ -35,7 +35,7 @@ var pingCmd = &cobra.Command{
 			&cfg.Client, log,
 			boot.PrepareDialOptions(
 				cfg.Client.Host, cfg.Client.Insecure,
-				cfg.Client.WaitForReady, cfg.Client.BackoffDelay,
+				cfg.Client.WaitForReady, cfg.Client.BackOffDelay,
 			)...,
 		)
 		if err != nil {

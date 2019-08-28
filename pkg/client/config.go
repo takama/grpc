@@ -10,5 +10,5 @@ type Config struct {
 	Port         int
 	Insecure     bool
 	WaitForReady bool
-	BackoffDelay time.Duration
+	BackOffDelay time.Duration
 }
