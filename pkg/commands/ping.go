@@ -1,5 +1,5 @@
 // Package commands contains global variables with configs and commands
-// nolint: gochecknoglobals, gochecknoinits
+// nolint: gochecknoglobals, gochecknoinits, dupl
 package commands
 
 import (
@@ -43,7 +43,7 @@ var pingCmd = &cobra.Command{
 		}
 		// Ping command
 		if err := cl.Ping(cmd.Flag("message").Value.String(), count); err != nil {
-			log.Fatal("Get info error", zap.Error(err))
+			log.Fatal("Ping error", zap.Error(err))
 		}
 		cl.Shutdown()
 	},
