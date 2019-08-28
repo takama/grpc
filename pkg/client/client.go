@@ -92,6 +92,32 @@ func (c *Client) Ping(message string, count int) error {
 	return nil
 }
 
+// Reverse command
+func (c *Client) Reverse(message string, count int) error {
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*300)
+	defer cancel()
+
+	metadata := new(metadata.MD)
+
+	cl := echo.NewEchoClient(c.conn)
+	for idx := 1; idx <= count; idx++ {
+		response, err := cl.Reverse(ctx, &echo.Request{
+			Content: fmt.Sprintf("%s: %d", message, idx),
+		}, grpc.Header(metadata))
+		if err != nil {
+			return err
+		}
+		c.log.Info(
+			"reverse",
+			zap.String("message", response.Content),
+			zap.Any("hostname", metadata.Get("hostname")),
+		)
+	}
+
+	return nil
+}
+
 // Shutdown closes active Client connections
 func (c *Client) Shutdown() {
 	if err := c.conn.Close(); err != nil {
