@@ -30,17 +30,22 @@ var pingCmd = &cobra.Command{
 			count = v
 		}
 
-		// Runs the domain checker
-		if err := client.Ping(
+		// Create new client
+		cl, err := client.New(
 			&cfg.Client, log,
-			cmd.Flag("message").Value.String(), count,
 			boot.PrepareDialOptions(
 				cfg.Client.Host, cfg.Client.Insecure,
 				cfg.Client.WaitForReady, cfg.Client.BackoffDelay,
 			)...,
-		); err != nil {
+		)
+		if err != nil {
+			log.Fatal("Get connection error", zap.Error(err))
+		}
+		// Ping command
+		if err := cl.Ping(cmd.Flag("message").Value.String(), count); err != nil {
 			log.Fatal("Get info error", zap.Error(err))
 		}
+		cl.Shutdown()
 	},
 }
 
