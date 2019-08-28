@@ -43,6 +43,11 @@ func New(ctx context.Context, cfg *Config, log *zap.Logger, opts ...grpc.DialOpt
 	}, nil
 }
 
+// Connection returns gRPC connection
+func (c *Client) Connection() *grpc.ClientConn {
+	return c.conn
+}
+
 // Info command
 func (c *Client) Info(ctx context.Context) error {
 	// Set up a connection to the server.
