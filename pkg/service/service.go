@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/takama/grpc/pkg/boot"
+	"github.com/takama/grpc/pkg/client"
 	"github.com/takama/grpc/pkg/config"
 	"github.com/takama/grpc/pkg/info"
 	"github.com/takama/grpc/pkg/logger"
@@ -30,8 +32,20 @@ func Run(cfg *config.Config) error {
 		zap.String("version", version.RELEASE+"-"+version.COMMIT+"-"+version.BRANCH),
 	)
 
+	// Create new client connection
+	cl, err := client.New(
+		context.Background(), &cfg.Client, log,
+		boot.PrepareDialOptions(
+			cfg.Client.Host, cfg.Client.Insecure,
+			cfg.Client.WaitForReady, cfg.Client.BackOffDelay,
+		)...,
+	)
+	if err != nil {
+		return err
+	}
+
 	// Create new core server
-	srv, err := server.New(context.Background(), &cfg.Server, log)
+	srv, err := server.New(context.Background(), cl, &cfg.Server, log)
 	if err != nil {
 		return err
 	}
