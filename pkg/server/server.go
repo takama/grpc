@@ -8,6 +8,7 @@ import (
 	"github.com/takama/grpc/contracts/echo"
 	"github.com/takama/grpc/contracts/info"
 	"github.com/takama/grpc/pkg/client"
+
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 )
@@ -29,7 +30,7 @@ func New(ctx context.Context, cl *client.Client, cfg *Config, log *zap.Logger) (
 		log: log,
 		cl:  cl,
 		is:  new(infoServer),
-		es:  &echoServer{log: log},
+		es:  &echoServer{cl: cl, log: log},
 	}, nil
 }
 
