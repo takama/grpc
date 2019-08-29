@@ -63,6 +63,9 @@ ingress:
   annotations:
     contour.heptio.com/ingress.class: contour
     contour.heptio.com/tls-minimum-protocol-version: TLSv1_2
+    contour.heptio.com/num-retries: 3
+    contour.heptio.com/request-timeout: 30s
+    contour.heptio.com/retry-on: 5xx
     kubernetes.io/ingress.allow-http: false
 
   ## Ingress route hosts
