@@ -11,6 +11,22 @@ metadata:
 data:
   default.conf: |-
     {
+      "client": {
+        "host": "{{ .Values.service.client.host }}",
+        "port": {{ .Values.service.client.port }},
+        "insecure": {{ .Values.service.client.insecure }},
+        "envoyProxy": {{ .Values.service.client.envoyProxy }},
+        "waitForReady": {{ .Values.service.client.waitForReady }},
+        "backOffDelay": {{ .Values.service.client.backOffDelay }},
+        "retry": {
+          "reason": {
+            "grpc": "{{ .Values.service.client.retry.reason.grpc }}",
+            "rest": "{{ .Values.service.client.retry.reason.rest }}"
+          },
+          "count": {{ .Values.service.client.retry.count }},
+          "timeout": {{ .Values.service.client.retry.timeout }}
+        }
+    },
       "server": {
         "port": {{ .Values.service.grpc.port }}
       },

@@ -110,6 +110,32 @@ service:
     ##
     statistics: false
 
+  ## Client connection to the service
+  ##
+  client:
+    host: grpc.op-dev.net
+    port: 443
+    ## use TLS or not
+    insecure: false
+    ## using of the Envoy proxy as a client balancer
+    envoyProxy: true
+    ## wait until gRPC stream will be ready
+    waitForReady: true
+    ## use exponential back off with maximum delay in second
+    backOffDelay: 15
+    ## retry settings
+    retry:
+      ## reasons to retry in connection
+      reason:
+        ## x-envoy-retry-grpc-on
+        grpc: "cancelled,deadline-exceeded,internal,resource-exhausted,unavailable"
+        ## x-envoy-retry-on
+        rest: "5xx,connect-failure"
+      ## count of retries
+      count: 30
+      ## max timeout second
+      timeout: 30
+
   ## Logger format and level
   ##
   logger:

@@ -3,6 +3,9 @@
 package commands
 
 import (
+	"context"
+	"time"
+
 	"github.com/takama/grpc/pkg/boot"
 	"github.com/takama/grpc/pkg/client"
 
@@ -22,12 +25,20 @@ Use --file or -f to specify JSON data file with batch requests`,
 		// nolint: errcheck
 		defer log.Sync()
 
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+		defer cancel()
+
+		// Create new client
+		cl, err := client.New(ctx, &cfg.Client, log)
+		if err != nil {
+			log.Fatal("Get connection error", zap.Error(err))
+		}
 		// Runs the domain checker
-		if err := client.Info(
-			&cfg.Client, log,
-			boot.TLSOption(cfg.Client.Host, cfg.Client.Insecure),
-		); err != nil {
+		if err := cl.Info(ctx); err != nil {
 			log.Fatal("Get info error", zap.Error(err))
+		}
+		if err := cl.Shutdown(ctx); err != nil {
+			log.Fatal("Close connection error", zap.Error(err))
 		}
 	},
 }

@@ -19,12 +19,19 @@ const (
 
 	DefaultConfigPath = "config/default.conf"
 
-	DefaultClientPort     = 8000
-	DefaultServerPort     = 8000
-	DefaultInfoPort       = 8080
-	DefaultClientInsecure = false
-	DefaultInfoStatistics = true
-	DefaultLoggerLevel    = logger.LevelInfo
+	DefaultClientPort            = 8000
+	DefaultServerPort            = 8000
+	DefaultInfoPort              = 8080
+	DefaultClientInsecure        = false
+	DefaultClientEnvoyProxy      = false
+	DefaultClientWaitForReady    = false
+	DefaultClientBackOffDelay    = 5
+	DefaultClientRetryGRPCReason = "unavailable"
+	DefaultClientRetryRESTReason = "5xx"
+	DefaultClientRetryCount      = 3
+	DefaultClientRetryTimeout    = 30
+	DefaultInfoStatistics        = true
+	DefaultLoggerLevel           = logger.LevelInfo
 )
 
 // Config -- Base config structure
@@ -39,9 +46,20 @@ type Config struct {
 func New() (*Config, error) {
 	cfg := &Config{
 		Client: client.Config{
-			Host:     ClientServiceName,
-			Port:     DefaultClientPort,
-			Insecure: DefaultClientInsecure,
+			Host:         ClientServiceName,
+			Port:         DefaultClientPort,
+			Insecure:     DefaultClientInsecure,
+			EnvoyProxy:   DefaultClientEnvoyProxy,
+			WaitForReady: DefaultClientWaitForReady,
+			BackOffDelay: DefaultClientBackOffDelay,
+			Retry: client.Retry{
+				Reason: client.Reason{
+					GRPC: DefaultClientRetryGRPCReason,
+					REST: DefaultClientRetryRESTReason,
+				},
+				Count:   DefaultClientRetryCount,
+				Timeout: DefaultClientRetryTimeout,
+			},
 		},
 		Server: server.Config{
 			Port: DefaultServerPort,
