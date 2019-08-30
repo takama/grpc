@@ -36,18 +36,12 @@ var reverseCmd = &cobra.Command{
 		defer cancel()
 
 		// Create new client
-		cl, err := client.New(
-			ctx, &cfg.Client, log,
-			boot.PrepareDialOptions(
-				cfg.Client.Host, cfg.Client.Insecure,
-				cfg.Client.WaitForReady, cfg.Client.BackOffDelay,
-			)...,
-		)
+		cl, err := client.New(ctx, &cfg.Client, log)
 		if err != nil {
 			log.Fatal("Get connection error", zap.Error(err))
 		}
 		// Reverse ping command
-		if err := cl.Reverse(ctx, cmd.Flag("message").Value.String(), count); err != nil {
+		if err := cl.Reverse(cl.Content(), cmd.Flag("message").Value.String(), count); err != nil {
 			log.Fatal("Reverse ping error", zap.Error(err))
 		}
 		if err := cl.Shutdown(ctx); err != nil {

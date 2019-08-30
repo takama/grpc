@@ -3,9 +3,12 @@ package client
 import (
 	"context"
 	"fmt"
+	"strconv"
+	"time"
 
 	"github.com/takama/grpc/contracts/echo"
 	"github.com/takama/grpc/contracts/info"
+	"github.com/takama/grpc/pkg/connection"
 
 	"github.com/golang/protobuf/ptypes/empty"
 	"go.uber.org/zap"
@@ -15,28 +18,50 @@ import (
 
 // Client provides access to the service using client connection
 type Client struct {
+	ctx  context.Context
 	cfg  *Config
 	log  *zap.Logger
 	conn *grpc.ClientConn
 }
 
 // New gives a Client
-func New(ctx context.Context, cfg *Config, log *zap.Logger, opts ...grpc.DialOption) (*Client, error) {
+func New(ctx context.Context, cfg *Config, log *zap.Logger) (*Client, error) {
 	// Set up a connection to the server.
-	conn, err := grpc.Dial(fmt.Sprintf("%s:%d", cfg.Host, cfg.Port), opts...)
+	conn, err := grpc.Dial(
+		fmt.Sprintf("%s:%d", cfg.Host, cfg.Port),
+		connection.PrepareDialOptions(
+			cfg.Host, cfg.Insecure,
+			cfg.WaitForReady, time.Duration(cfg.BackOffDelay)*time.Second,
+		)...,
+	)
 	if err != nil {
 		return nil, err
 	}
+
+	if cfg.EnvoyProxy {
+		ctx = metadata.AppendToOutgoingContext(ctx,
+			"x-envoy-retry-on", cfg.Retry.Reason.REST,
+			"x-envoy-retry-grpc-on", cfg.Retry.Reason.GRPC,
+			"x-envoy-max-retries", strconv.Itoa(cfg.Retry.Count),
+			"x-envoy-upstream-rq-timeout-ms", strconv.Itoa(cfg.Retry.Timeout*1000),
+		)
+	}
+
 	log.Info(
 		"Connected with config:",
 		zap.String("host", cfg.Host),
 		zap.Int("port", cfg.Port),
 		zap.Bool("insecure", cfg.Insecure),
 		zap.Bool("wait for ready", cfg.WaitForReady),
-		zap.Any("back off delay", cfg.BackOffDelay),
+		zap.Int("back off delay (s)", cfg.BackOffDelay),
+		zap.String("Retry reason for gRPC", cfg.Retry.Reason.GRPC),
+		zap.String("Retry reason for REST", cfg.Retry.Reason.REST),
+		zap.String("Retries count", strconv.Itoa(cfg.Retry.Count)),
+		zap.String("retries timeout (ms)", strconv.Itoa(cfg.Retry.Timeout*1000)),
 	)
 
 	return &Client{
+		ctx:  ctx,
 		cfg:  cfg,
 		log:  log,
 		conn: conn,
@@ -46,6 +71,11 @@ func New(ctx context.Context, cfg *Config, log *zap.Logger, opts ...grpc.DialOpt
 // Connection returns gRPC connection
 func (c *Client) Connection() *grpc.ClientConn {
 	return c.conn
+}
+
+// Content returns context
+func (c *Client) Content() context.Context {
+	return c.ctx
 }
 
 // Info command
@@ -70,20 +100,20 @@ func (c *Client) Info(ctx context.Context) error {
 // Ping command
 func (c *Client) Ping(ctx context.Context, message string, count int) error {
 
-	metadata := new(metadata.MD)
+	md := new(metadata.MD)
 
 	cl := echo.NewEchoClient(c.conn)
 	for idx := 1; idx <= count; idx++ {
 		response, err := cl.Ping(ctx, &echo.Request{
 			Content: fmt.Sprintf("%s: %d", message, idx),
-		}, grpc.Header(metadata))
+		}, grpc.Header(md))
 		if err != nil {
 			return err
 		}
 		c.log.Info(
 			"ping",
 			zap.String("message", response.Content),
-			zap.Any("hostname", metadata.Get("hostname")),
+			zap.Any("hostname", md.Get("hostname")),
 		)
 	}
 
@@ -93,20 +123,20 @@ func (c *Client) Ping(ctx context.Context, message string, count int) error {
 // Reverse command
 func (c *Client) Reverse(ctx context.Context, message string, count int) error {
 
-	metadata := new(metadata.MD)
+	md := new(metadata.MD)
 
 	cl := echo.NewEchoClient(c.conn)
 	for idx := 1; idx <= count; idx++ {
 		response, err := cl.Reverse(ctx, &echo.Request{
 			Content: fmt.Sprintf("%s: %d", message, idx),
-		}, grpc.Header(metadata))
+		}, grpc.Header(md))
 		if err != nil {
 			return err
 		}
 		c.log.Info(
 			"reverse",
 			zap.String("message", response.Content),
-			zap.Any("hostname", metadata.Get("hostname")),
+			zap.Any("hostname", md.Get("hostname")),
 		)
 	}
 
