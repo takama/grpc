@@ -63,9 +63,6 @@ ingress:
   annotations:
     contour.heptio.com/ingress.class: contour
     contour.heptio.com/tls-minimum-protocol-version: TLSv1_2
-    contour.heptio.com/num-retries: 3
-    contour.heptio.com/request-timeout: 30s
-    contour.heptio.com/retry-on: 5xx
     kubernetes.io/ingress.allow-http: false
 
   ## Ingress route hosts
@@ -120,10 +117,24 @@ service:
     port: 443
     ## use TLS or not
     insecure: false
+    ## using of the Envoy proxy as a client balancer
+    envoyProxy: true
     ## wait until gRPC stream will be ready
     waitForReady: true
-    ## use exponential back off with maximum delay in nanoseconds
-    backOffDelay: 5000000000
+    ## use exponential back off with maximum delay in second
+    backOffDelay: 15
+    ## retry settings
+    retry:
+      ## reasons to retry in connection
+      reason:
+        ## x-envoy-retry-grpc-on
+        grpc: "cancelled,deadline-exceeded,internal,resource-exhausted,unavailable"
+        ## x-envoy-retry-on
+        rest: "5xx,connect-failure"
+      ## count of retries
+      count: 30
+      ## max timeout second
+      timeout: 30
 
   ## Logger format and level
   ##
