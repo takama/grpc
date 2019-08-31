@@ -8,7 +8,6 @@ import (
 
 	"github.com/takama/grpc/contracts/echo"
 	"github.com/takama/grpc/contracts/info"
-	"github.com/takama/grpc/pkg/connection"
 
 	"github.com/golang/protobuf/ptypes/empty"
 	"go.uber.org/zap"
@@ -29,7 +28,7 @@ func New(ctx context.Context, cfg *Config, log *zap.Logger) (*Client, error) {
 	// Set up a connection to the server.
 	conn, err := grpc.Dial(
 		fmt.Sprintf("%s:%d", cfg.Host, cfg.Port),
-		connection.PrepareDialOptions(
+		PrepareDialOptions(
 			cfg.Host, cfg.Insecure,
 			cfg.WaitForReady, time.Duration(cfg.BackOffDelay)*time.Second,
 		)...,
@@ -73,8 +72,8 @@ func (c *Client) Connection() *grpc.ClientConn {
 	return c.conn
 }
 
-// Content returns context
-func (c *Client) Content() context.Context {
+// Context returns context
+func (c *Client) Context() context.Context {
 	return c.ctx
 }
 

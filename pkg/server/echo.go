@@ -42,7 +42,7 @@ func (es echoServer) Reverse(ctx context.Context, in *echo.Request) (*echo.Respo
 	md := new(metadata.MD)
 
 	cl := echo.NewEchoClient(es.cl.Connection())
-	response, err := cl.Ping(es.cl.Content(), &echo.Request{
+	response, err := cl.Ping(es.cl.Context(), &echo.Request{
 		Content: in.Content}, grpc.Header(md))
 	if err != nil {
 		es.log.Error("reverse ping: do request to other service", zap.Error(err))

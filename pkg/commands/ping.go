@@ -41,7 +41,7 @@ var pingCmd = &cobra.Command{
 			log.Fatal("Get connection error", zap.Error(err))
 		}
 		// Ping command
-		if err := cl.Ping(cl.Content(), cmd.Flag("message").Value.String(), count); err != nil {
+		if err := cl.Ping(cl.Context(), cmd.Flag("message").Value.String(), count); err != nil {
 			log.Fatal("Ping error", zap.Error(err))
 		}
 		if err := cl.Shutdown(ctx); err != nil {

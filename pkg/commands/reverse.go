@@ -41,7 +41,7 @@ var reverseCmd = &cobra.Command{
 			log.Fatal("Get connection error", zap.Error(err))
 		}
 		// Reverse ping command
-		if err := cl.Reverse(cl.Content(), cmd.Flag("message").Value.String(), count); err != nil {
+		if err := cl.Reverse(cl.Context(), cmd.Flag("message").Value.String(), count); err != nil {
 			log.Fatal("Reverse ping error", zap.Error(err))
 		}
 		if err := cl.Shutdown(ctx); err != nil {
