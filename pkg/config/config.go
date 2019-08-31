@@ -26,8 +26,8 @@ const (
 	DefaultClientEnvoyProxy      = false
 	DefaultClientWaitForReady    = false
 	DefaultClientBackOffDelay    = 5
+	DefaultClientRetryReason     = "5xx"
 	DefaultClientRetryGRPCReason = "unavailable"
-	DefaultClientRetryRESTReason = "5xx"
 	DefaultClientRetryCount      = 3
 	DefaultClientRetryTimeout    = 30
 	DefaultInfoStatistics        = true
@@ -54,8 +54,8 @@ func New() (*Config, error) {
 			BackOffDelay: DefaultClientBackOffDelay,
 			Retry: client.Retry{
 				Reason: client.Reason{
-					GRPC: DefaultClientRetryGRPCReason,
-					REST: DefaultClientRetryRESTReason,
+					Primary: DefaultClientRetryReason,
+					GRPC:    DefaultClientRetryGRPCReason,
 				},
 				Count:   DefaultClientRetryCount,
 				Timeout: DefaultClientRetryTimeout,

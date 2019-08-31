@@ -20,6 +20,6 @@ type Retry struct {
 
 // Reason config describes reasons to retry
 type Reason struct {
-	GRPC string
-	REST string
+	Primary string
+	GRPC    string
 }

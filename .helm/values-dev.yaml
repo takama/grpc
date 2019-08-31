@@ -127,10 +127,10 @@ service:
     retry:
       ## reasons to retry in connection
       reason:
+        ## x-envoy-retry-on
+        primary: "5xx,connect-failure"
         ## x-envoy-retry-grpc-on
         grpc: "cancelled,deadline-exceeded,internal,resource-exhausted,unavailable"
-        ## x-envoy-retry-on
-        rest: "5xx,connect-failure"
       ## count of retries
       count: 30
       ## max timeout second

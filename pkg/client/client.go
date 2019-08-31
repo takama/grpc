@@ -40,7 +40,7 @@ func New(ctx context.Context, cfg *Config, log *zap.Logger) (*Client, error) {
 
 	if cfg.EnvoyProxy {
 		ctx = metadata.AppendToOutgoingContext(ctx,
-			"x-envoy-retry-on", cfg.Retry.Reason.REST,
+			"x-envoy-retry-on", cfg.Retry.Reason.Primary,
 			"x-envoy-retry-grpc-on", cfg.Retry.Reason.GRPC,
 			"x-envoy-max-retries", strconv.Itoa(cfg.Retry.Count),
 			"x-envoy-upstream-rq-timeout-ms", strconv.Itoa(cfg.Retry.Timeout*1000),
@@ -54,8 +54,8 @@ func New(ctx context.Context, cfg *Config, log *zap.Logger) (*Client, error) {
 		zap.Bool("insecure", cfg.Insecure),
 		zap.Bool("wait for ready", cfg.WaitForReady),
 		zap.Int("back off delay (s)", cfg.BackOffDelay),
+		zap.String("Retry reason", cfg.Retry.Reason.Primary),
 		zap.String("Retry reason for gRPC", cfg.Retry.Reason.GRPC),
-		zap.String("Retry reason for REST", cfg.Retry.Reason.REST),
 		zap.String("Retries count", strconv.Itoa(cfg.Retry.Count)),
 		zap.String("retries timeout (ms)", strconv.Itoa(cfg.Retry.Timeout*1000)),
 	)
