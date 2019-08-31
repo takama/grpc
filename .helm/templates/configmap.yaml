@@ -20,8 +20,8 @@ data:
         "backOffDelay": {{ .Values.service.client.backOffDelay }},
         "retry": {
           "reason": {
-            "grpc": "{{ .Values.service.client.retry.reason.grpc }}",
-            "rest": "{{ .Values.service.client.retry.reason.rest }}"
+            "primary": "{{ .Values.service.client.retry.reason.primary }}",
+            "grpc": "{{ .Values.service.client.retry.reason.grpc }}"
           },
           "count": {{ .Values.service.client.retry.count }},
           "timeout": {{ .Values.service.client.retry.timeout }}
