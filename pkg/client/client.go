@@ -30,7 +30,7 @@ func New(ctx context.Context, cfg *Config, log *zap.Logger) (*Client, error) {
 		fmt.Sprintf("%s:%d", cfg.Host, cfg.Port),
 		DialOptions(
 			cfg.Host, cfg.Insecure,
-			cfg.WaitForReady, time.Duration(cfg.BackOffDelay)*time.Second,
+			cfg.WaitForReady, time.Duration(cfg.Timeout)*time.Second,
 		)...,
 	)
 	if err != nil {
@@ -42,7 +42,8 @@ func New(ctx context.Context, cfg *Config, log *zap.Logger) (*Client, error) {
 			"x-envoy-retry-on", cfg.Retry.Reason.Primary,
 			"x-envoy-retry-grpc-on", cfg.Retry.Reason.GRPC,
 			"x-envoy-max-retries", strconv.Itoa(cfg.Retry.Count),
-			"x-envoy-upstream-rq-timeout-ms", strconv.Itoa(cfg.Retry.Timeout*1000),
+			"x-envoy-upstream-rq-timeout-ms", strconv.Itoa(cfg.Timeout*1000),
+			"x-envoy-upstream-rq-per-try-timeout-ms", strconv.Itoa(cfg.Retry.Timeout*1000),
 		)
 	}
 
@@ -52,7 +53,7 @@ func New(ctx context.Context, cfg *Config, log *zap.Logger) (*Client, error) {
 		zap.Int("port", cfg.Port),
 		zap.Bool("insecure", cfg.Insecure),
 		zap.Bool("wait for ready", cfg.WaitForReady),
-		zap.Int("back off delay (s)", cfg.BackOffDelay),
+		zap.Int("timeout (s)", cfg.Timeout),
 		zap.String("Retry reason", cfg.Retry.Reason.Primary),
 		zap.String("Retry reason for gRPC", cfg.Retry.Reason.GRPC),
 		zap.String("Retries count", strconv.Itoa(cfg.Retry.Count)),

@@ -25,11 +25,11 @@ const (
 	DefaultClientInsecure        = false
 	DefaultClientEnvoyProxy      = false
 	DefaultClientWaitForReady    = false
-	DefaultClientBackOffDelay    = 5
+	DefaultClientTimeout         = 15
 	DefaultClientRetryReason     = "5xx"
 	DefaultClientRetryGRPCReason = "unavailable"
 	DefaultClientRetryCount      = 3
-	DefaultClientRetryTimeout    = 30
+	DefaultClientRetryTimeout    = 5
 	DefaultInfoStatistics        = true
 	DefaultLoggerLevel           = logger.LevelInfo
 )
@@ -51,7 +51,7 @@ func New() (*Config, error) {
 			Insecure:     DefaultClientInsecure,
 			EnvoyProxy:   DefaultClientEnvoyProxy,
 			WaitForReady: DefaultClientWaitForReady,
-			BackOffDelay: DefaultClientBackOffDelay,
+			Timeout:      DefaultClientTimeout,
 			Retry: client.Retry{
 				Reason: client.Reason{
 					Primary: DefaultClientRetryReason,
