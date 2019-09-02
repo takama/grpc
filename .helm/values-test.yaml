@@ -121,8 +121,8 @@ service:
     envoyProxy: true
     ## wait until gRPC stream will be ready
     waitForReady: true
-    ## use exponential back off with maximum delay in seconds
-    backOffDelay: 15
+    ## request maximum timeout in second
+    timeout: 15
     ## retry settings
     retry:
       ## reasons to retry in connection
@@ -132,9 +132,9 @@ service:
         ## x-envoy-retry-grpc-on
         grpc: "cancelled,deadline-exceeded,internal,resource-exhausted,unavailable"
       ## count of retries
-      count: 30
-      ## max timeout second
-      timeout: 30
+      count: 3
+      ## per retry maximum timeout in seconds
+      timeout: 5
 
   ## Logger format and level
   ##

@@ -17,7 +17,7 @@ data:
         "insecure": {{ .Values.service.client.insecure }},
         "envoyProxy": {{ .Values.service.client.envoyProxy }},
         "waitForReady": {{ .Values.service.client.waitForReady }},
-        "backOffDelay": {{ .Values.service.client.backOffDelay }},
+        "timeout": {{ .Values.service.client.timeout }},
         "retry": {
           "reason": {
             "primary": "{{ .Values.service.client.retry.reason.primary }}",

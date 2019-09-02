@@ -7,7 +7,7 @@ type Config struct {
 	Insecure     bool
 	EnvoyProxy   bool
 	WaitForReady bool
-	BackOffDelay int
+	Timeout      int
 	Retry        Retry
 }
 
