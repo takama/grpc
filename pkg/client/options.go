@@ -8,9 +8,9 @@ import (
 	"google.golang.org/grpc/credentials"
 )
 
-// PrepareDialOptions gives options that manage TLS options,
+// DialOptions gives options that manage TLS options,
 // retries and exponential backoff in calls to a service
-func PrepareDialOptions(
+func DialOptions(
 	host string, insecure, waitForReady bool, maxDelay time.Duration,
 	opts ...grpc.DialOption,
 ) []grpc.DialOption {

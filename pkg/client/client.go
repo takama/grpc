@@ -28,7 +28,7 @@ func New(ctx context.Context, cfg *Config, log *zap.Logger) (*Client, error) {
 	// Set up a connection to the server.
 	conn, err := grpc.Dial(
 		fmt.Sprintf("%s:%d", cfg.Host, cfg.Port),
-		PrepareDialOptions(
+		DialOptions(
 			cfg.Host, cfg.Insecure,
 			cfg.WaitForReady, time.Duration(cfg.BackOffDelay)*time.Second,
 		)...,
