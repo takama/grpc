@@ -122,7 +122,7 @@ service:
     ## wait until gRPC stream will be ready
     waitForReady: true
     ## request maximum timeout in second
-    timeout: 15
+    timeout: 30
     ## retry settings
     retry:
       ## reasons to retry in connection
@@ -132,7 +132,7 @@ service:
         ## x-envoy-retry-grpc-on
         grpc: "cancelled,deadline-exceeded,internal,resource-exhausted,unavailable"
       ## count of retries
-      count: 3
+      count: 30
       ## per retry maximum timeout in seconds
       timeout: 5
 
