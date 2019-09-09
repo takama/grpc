@@ -25,10 +25,10 @@ const (
 	DefaultClientInsecure        = false
 	DefaultClientEnvoyProxy      = false
 	DefaultClientWaitForReady    = false
-	DefaultClientTimeout         = 15
+	DefaultClientTimeout         = 30
 	DefaultClientRetryReason     = "5xx"
 	DefaultClientRetryGRPCReason = "unavailable"
-	DefaultClientRetryCount      = 3
+	DefaultClientRetryCount      = 30
 	DefaultClientRetryTimeout    = 5
 	DefaultInfoStatistics        = true
 	DefaultLoggerLevel           = logger.LevelInfo
