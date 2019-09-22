@@ -34,6 +34,11 @@ data:
         "port": {{ .Values.service.info.port }},
         "statistics": {{ .Values.service.info.statistics }}
       },
+      "system": {
+          "grace": {
+              "period": {{ .Values.gracePeriod }}
+          }
+      },
       "logger": {
         "format": "{{ .Values.service.logger.format }}",
         "level": {{ .Values.service.logger.level }},

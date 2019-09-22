@@ -145,7 +145,7 @@ service:
     level: 0
 
     ## logging time
-    time: false
+    time: true
 
 livenessProbe:
   ## Liveness Probe
