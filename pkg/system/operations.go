@@ -14,12 +14,14 @@ var ErrEmptyServerPointer = errors.New("server pointer should not be nil")
 
 // Operations implements simplest Operator interface
 type Operations struct {
-	shutdowns []Shutdowner
+	gracePeriod time.Duration
+	shutdowns   []Shutdowner
 }
 
 // NewOperator creates operator
-func NewOperator(sd ...Shutdowner) *Operations {
+func NewOperator(cfg *Config, sd ...Shutdowner) *Operations {
 	service := new(Operations)
+	service.gracePeriod = time.Duration(cfg.Grace.Period) * time.Second
 	service.shutdowns = append(service.shutdowns, sd...)
 
 	return service
@@ -38,7 +40,7 @@ func (o Operations) Maintenance() error {
 // Shutdown operation
 func (o Operations) Shutdown() []error {
 	var errs []error
-	ctx, cancel := context.WithTimeout(context.TODO(), 15*time.Second)
+	ctx, cancel := context.WithTimeout(context.TODO(), o.gracePeriod)
 	defer cancel()
 	for _, fn := range o.shutdowns {
 		if err := fn.Shutdown(ctx); err != nil {

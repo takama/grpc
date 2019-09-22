@@ -5,6 +5,7 @@ import (
 	"github.com/takama/grpc/pkg/info"
 	"github.com/takama/grpc/pkg/logger"
 	"github.com/takama/grpc/pkg/server"
+	"github.com/takama/grpc/pkg/system"
 
 	"github.com/spf13/viper"
 )
@@ -30,6 +31,7 @@ const (
 	DefaultClientRetryGRPCReason = "unavailable"
 	DefaultClientRetryCount      = 30
 	DefaultClientRetryTimeout    = 5
+	DefaultGracePeriod           = 30
 	DefaultInfoStatistics        = true
 	DefaultLoggerLevel           = logger.LevelInfo
 )
@@ -40,6 +42,7 @@ type Config struct {
 	Server server.Config
 	Info   info.Config
 	Logger logger.Config
+	System system.Config
 }
 
 // New - returns new config record initialized with default values
@@ -67,6 +70,11 @@ func New() (*Config, error) {
 		Info: info.Config{
 			Port:       DefaultInfoPort,
 			Statistics: DefaultInfoStatistics,
+		},
+		System: system.Config{
+			Grace: system.Grace{
+				Period: DefaultGracePeriod,
+			},
 		},
 		Logger: logger.Config{
 			Level: DefaultLoggerLevel,

@@ -6,7 +6,7 @@ import (
 )
 
 func TestStubHandling(t *testing.T) {
-	operator := NewOperator(&http.Server{})
+	operator := NewOperator(&Config{Grace: Grace{Period: 30}}, &http.Server{})
 	err := operator.Reload()
 	if err != ErrNotImplemented {
 		t.Error("Expected error", ErrNotImplemented, "got", err)
