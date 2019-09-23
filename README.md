@@ -1,12 +1,41 @@
 
 # grpc
 
-grpc test
+gRPC service and utility to check load balancing and connection stability
 
-## Run the service
+## Build the service
 
 ```sh
-make run
+make build
+```
+
+## Deploy the service
+
+```sh
+make deploy
+```
+
+## Run the utility with simple ping
+
+```sh
+./bin/darwin-amd64/grpc client ping --count 600 --config config/test.conf
+```
+
+## Run the utility with reverse ping
+
+```sh
+./bin/darwin-amd64/grpc client reverse --count 600 --config config/test.conf
+```
+
+## Scale services
+
+During the ping process scale services from 1 to N and see how it is going
+
+```sh
+kubectl scale --replicas 3 -n test deploy/grpc
+kubectl scale --replicas 6 -n test deploy/grpc
+kubectl scale --replicas 1 -n test deploy/grpc
+...
 ```
 
 ## Other make commands
