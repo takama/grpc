@@ -18,6 +18,10 @@ data:
         "envoyProxy": {{ .Values.service.client.envoyProxy }},
         "waitForReady": {{ .Values.service.client.waitForReady }},
         "timeout": {{ .Values.service.client.timeout }},
+        "keepalive": {
+          "time": {{ .Values.service.client.keepalive.time }},
+          "timeout": {{ .Values.service.client.keepalive.timeout }}
+        },
         "retry": {
           "reason": {
             "primary": "{{ .Values.service.client.retry.reason.primary }}",
@@ -28,7 +32,16 @@ data:
         }
     },
       "server": {
-        "port": {{ .Values.service.grpc.port }}
+        "port": {{ .Values.service.grpc.port }},
+        "connection": {
+          "idle": {{ .Values.service.connection.idle }},
+          "age": {{ .Values.service.connection.age }},
+          "grace": {{ .Values.service.connection.grace }},
+          "keepalive": {
+            "time": {{ .Values.service.connection.keepalive.time }},
+            "timeout": {{ .Values.service.connection.keepalive.timeout }}
+          }
+        }
       },
       "info": {
         "port": {{ .Values.service.info.port }},

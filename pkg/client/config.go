@@ -8,6 +8,7 @@ type Config struct {
 	EnvoyProxy   bool
 	WaitForReady bool
 	Timeout      int
+	Keepalive    Keepalive
 	Retry        Retry
 }
 
@@ -22,4 +23,10 @@ type Retry struct {
 type Reason struct {
 	Primary string
 	GRPC    string
+}
+
+// Keepalive connection parameters
+type Keepalive struct {
+	Time    int
+	Timeout int
 }

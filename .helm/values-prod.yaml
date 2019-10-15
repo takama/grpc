@@ -110,6 +110,27 @@ service:
     ##
     statistics: false
 
+  ## Service connection parameters
+  ##
+  connection:
+    ## Time in seconds after which an idle connection would be closed by sending a GoAway.
+    ## Zero means an infinity value
+    idle: 0
+    ## Time in seconds when a connection may exist before it will be closed by sending a GoAway.
+    ## Zero means an infinity value
+    age: 0
+    ## Additive period in seconds after "age" which the connection will be forcibly closed.
+    ## Zero means an infinity value
+    grace: 0
+    ## Keepalive parameters
+    keepalive:
+      ## After a duration of this time if the server doesn't see any activity it
+      ## pings the client to see if the transport is still alive (seconds)
+      time: 300
+      ## After having pinged for keepalive check, the server waits timeout and
+      ## if no activity is seen even after that the connection is closed (seconds)
+      timeout: 10
+
   ## Client connection to the service
   ##
   client:
@@ -123,6 +144,14 @@ service:
     waitForReady: true
     ## request maximum timeout in second
     timeout: 30
+    ## Keepalive parameters
+    keepalive:
+      ## After a duration of this time if the client doesn't see any activity it
+      ## pings the server to see if the transport is still alive (seconds)
+      time: 10
+      ## After having pinged for keepalive check, the client waits timeout and
+      ## if no activity is seen even after that the connection is closed (seconds)
+      timeout: 5
     ## retry settings
     retry:
       ## reasons to retry in connection

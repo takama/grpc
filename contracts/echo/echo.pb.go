@@ -8,6 +8,8 @@ import (
 	fmt "fmt"
 	proto "github.com/golang/protobuf/proto"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 	math "math"
 )
 
@@ -172,6 +174,17 @@ func (c *echoClient) Reverse(ctx context.Context, in *Request, opts ...grpc.Call
 type EchoServer interface {
 	Ping(context.Context, *Request) (*Response, error)
 	Reverse(context.Context, *Request) (*Response, error)
+}
+
+// UnimplementedEchoServer can be embedded to have forward compatible implementations.
+type UnimplementedEchoServer struct {
+}
+
+func (*UnimplementedEchoServer) Ping(ctx context.Context, req *Request) (*Response, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Ping not implemented")
+}
+func (*UnimplementedEchoServer) Reverse(ctx context.Context, req *Request) (*Response, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Reverse not implemented")
 }
 
 func RegisterEchoServer(s *grpc.Server, srv EchoServer) {
