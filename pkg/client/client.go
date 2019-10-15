@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"strconv"
-	"time"
 
 	"github.com/takama/grpc/contracts/echo"
 	"github.com/takama/grpc/contracts/info"
@@ -28,10 +27,7 @@ func New(ctx context.Context, cfg *Config, log *zap.Logger) (*Client, error) {
 	// Set up a connection to the server.
 	conn, err := grpc.Dial(
 		fmt.Sprintf("%s:%d", cfg.Host, cfg.Port),
-		DialOptions(
-			cfg.Host, cfg.Insecure,
-			cfg.WaitForReady, time.Duration(cfg.Timeout)*time.Second,
-		)...,
+		DialOptions(cfg)...,
 	)
 	if err != nil {
 		return nil, err

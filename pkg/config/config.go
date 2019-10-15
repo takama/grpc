@@ -20,20 +20,27 @@ const (
 
 	DefaultConfigPath = "config/default.conf"
 
-	DefaultClientPort            = 8000
-	DefaultServerPort            = 8000
-	DefaultInfoPort              = 8080
-	DefaultClientInsecure        = false
-	DefaultClientEnvoyProxy      = false
-	DefaultClientWaitForReady    = false
-	DefaultClientTimeout         = 30
-	DefaultClientRetryReason     = "5xx"
-	DefaultClientRetryGRPCReason = "unavailable"
-	DefaultClientRetryCount      = 30
-	DefaultClientRetryTimeout    = 5
-	DefaultGracePeriod           = 30
-	DefaultInfoStatistics        = true
-	DefaultLoggerLevel           = logger.LevelInfo
+	DefaultClientPort               = 8000
+	DefaultServerPort               = 8000
+	DefaultInfoPort                 = 8080
+	DefaultClientInsecure           = false
+	DefaultClientEnvoyProxy         = false
+	DefaultClientWaitForReady       = false
+	DefaultClientTimeout            = 30
+	DefaultClientKeepAliveTime      = 10
+	DefaultClientKeepAliveTimeout   = 5
+	DefaultClientRetryReason        = "5xx"
+	DefaultClientRetryGRPCReason    = "unavailable"
+	DefaultClientRetryCount         = 30
+	DefaultClientRetryTimeout       = 5
+	DefaultServerConnectionIdle     = 0
+	DefaultServerConnectionAge      = 0
+	DefaultServerConnectionAgeGrace = 0
+	DefaultServertKeepAliveTime     = 300
+	DefaultServerKeepAliveTimeout   = 10
+	DefaultGracePeriod              = 30
+	DefaultInfoStatistics           = true
+	DefaultLoggerLevel              = logger.LevelInfo
 )
 
 // Config -- Base config structure
@@ -55,6 +62,10 @@ func New() (*Config, error) {
 			EnvoyProxy:   DefaultClientEnvoyProxy,
 			WaitForReady: DefaultClientWaitForReady,
 			Timeout:      DefaultClientTimeout,
+			Keepalive: client.Keepalive{
+				Time:    DefaultClientKeepAliveTime,
+				Timeout: DefaultClientKeepAliveTimeout,
+			},
 			Retry: client.Retry{
 				Reason: client.Reason{
 					Primary: DefaultClientRetryReason,
@@ -66,6 +77,15 @@ func New() (*Config, error) {
 		},
 		Server: server.Config{
 			Port: DefaultServerPort,
+			Connection: server.Connection{
+				Idle:  DefaultServerConnectionIdle,
+				Age:   DefaultServerConnectionAge,
+				Grace: DefaultServerConnectionAgeGrace,
+				Keepalive: server.Keepalive{
+					Time:    DefaultServertKeepAliveTime,
+					Timeout: DefaultServerKeepAliveTimeout,
+				},
+			},
 		},
 		Info: info.Config{
 			Port:       DefaultInfoPort,
