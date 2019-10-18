@@ -40,12 +40,16 @@ func (o Operations) Maintenance() error {
 // Shutdown operation
 func (o Operations) Shutdown() []error {
 	var errs []error
+
 	ctx, cancel := context.WithTimeout(context.TODO(), o.gracePeriod)
+
 	defer cancel()
+
 	for _, fn := range o.shutdowns {
 		if err := fn.Shutdown(ctx); err != nil {
 			errs = append(errs, err)
 		}
 	}
+
 	return errs
 }
