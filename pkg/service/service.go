@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/takama/grpc/pkg/client"
+	"github.com/takama/grpc/client"
 	"github.com/takama/grpc/pkg/config"
 	"github.com/takama/grpc/pkg/info"
 	"github.com/takama/grpc/pkg/logger"
@@ -31,8 +31,8 @@ func Run(cfg *config.Config) error {
 		zap.String("version", version.RELEASE+"-"+version.COMMIT+"-"+version.BRANCH),
 	)
 
-	// Create new client connection
-	cl, err := client.New(context.Background(), &cfg.Client, log)
+	// Create new gRPC client connection
+	cl, err := client.New(&cfg.Client, log)
 	if err != nil {
 		return err
 	}

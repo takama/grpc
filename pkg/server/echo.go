@@ -6,8 +6,8 @@ import (
 	"os"
 	"time"
 
+	"github.com/takama/grpc/client"
 	"github.com/takama/grpc/contracts/echo"
-	"github.com/takama/grpc/pkg/client"
 
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
@@ -48,7 +48,7 @@ func (es echoServer) Reverse(ctx context.Context, in *echo.Request) (*echo.Respo
 	md := new(metadata.MD)
 
 	cl := echo.NewEchoClient(es.cl.Connection())
-	response, err := cl.Ping(es.cl.Context(), &echo.Request{
+	response, err := cl.Ping(es.cl.Context(ctx), &echo.Request{
 		Content: in.Content}, grpc.Header(md))
 
 	if err != nil {

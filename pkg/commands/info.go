@@ -29,7 +29,7 @@ Use --file or -f to specify JSON data file with batch requests`,
 		defer cancel()
 
 		// Create new client
-		cl, err := client.New(ctx, &cfg.Client, log)
+		cl, err := client.New(&cfg.Client, log)
 		if err != nil {
 			log.Fatal("Get connection error", zap.Error(err))
 		}

@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"net"
 
+	"github.com/takama/grpc/client"
 	"github.com/takama/grpc/contracts/echo"
 	"github.com/takama/grpc/contracts/info"
-	"github.com/takama/grpc/pkg/client"
 
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
@@ -63,6 +63,10 @@ func (s *Server) Run(ctx context.Context) error {
 func (s Server) Shutdown(ctx context.Context) error {
 	if s.srv != nil {
 		s.srv.GracefulStop()
+	}
+
+	if s.cl != nil {
+		return s.cl.Shutdown(ctx)
 	}
 
 	return nil

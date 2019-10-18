@@ -1,7 +1,7 @@
 package config
 
 import (
-	"github.com/takama/grpc/pkg/client"
+	"github.com/takama/grpc/client"
 	"github.com/takama/grpc/pkg/info"
 	"github.com/takama/grpc/pkg/logger"
 	"github.com/takama/grpc/pkg/server"
