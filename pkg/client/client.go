@@ -77,7 +77,6 @@ func (c *Client) Context() context.Context {
 // Info command
 func (c *Client) Info(ctx context.Context) error {
 	// Set up a connection to the server.
-
 	info, err := info.NewInfoClient(c.conn).GetInfo(ctx, new(empty.Empty))
 	if err != nil {
 		return err
@@ -95,10 +94,10 @@ func (c *Client) Info(ctx context.Context) error {
 
 // Ping command
 func (c *Client) Ping(ctx context.Context, message string, count int) error {
-
 	md := new(metadata.MD)
 
 	cl := echo.NewEchoClient(c.conn)
+
 	for idx := 1; idx <= count; idx++ {
 		response, err := cl.Ping(ctx, &echo.Request{
 			Content: fmt.Sprintf("%s: %d", message, idx),
@@ -106,6 +105,7 @@ func (c *Client) Ping(ctx context.Context, message string, count int) error {
 		if err != nil {
 			return err
 		}
+
 		c.log.Info(
 			"ping",
 			zap.String("message", response.Content),
@@ -118,10 +118,10 @@ func (c *Client) Ping(ctx context.Context, message string, count int) error {
 
 // Reverse command
 func (c *Client) Reverse(ctx context.Context, message string, count int) error {
-
 	md := new(metadata.MD)
 
 	cl := echo.NewEchoClient(c.conn)
+
 	for idx := 1; idx <= count; idx++ {
 		response, err := cl.Reverse(ctx, &echo.Request{
 			Content: fmt.Sprintf("%s: %d", message, idx),
@@ -129,6 +129,7 @@ func (c *Client) Reverse(ctx context.Context, message string, count int) error {
 		if err != nil {
 			return err
 		}
+
 		c.log.Info(
 			"reverse",
 			zap.String("message", response.Content),

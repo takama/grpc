@@ -46,7 +46,6 @@ func (s Server) ReadinessProbe() error {
 
 // Run starts the server
 func (s *Server) Run(ctx context.Context) error {
-
 	// Register gRPC server
 	s.srv = grpc.NewServer(Options(s.cfg)...)
 	info.RegisterInfoServer(s.srv, s.is)
