@@ -1,7 +1,37 @@
 
-# grpc
+# gRPC Go client with advanced settings
 
-gRPC service and utility to check load balancing and connection stability
+gRPC client, service and CLI utility to provide/check load balancing and connection stability
+
+## Using gRPC Go client
+
+```go
+import "github.com/takama/grpc/client"
+...
+
+c, err := client.New(cfg, log)
+if err != nil {
+    log.Fatal(err)
+}
+
+ctx, cancel := context.WithTimeout(context.Background(), time.Second*15)
+defer cancel()
+
+e := echo.NewEchoClient(c.Connection())
+response, err := e.Ping(
+    // This is important to pass trough c.Context(ctx)
+    // when we use Envoy balancer for any retries
+    c.Context(ctx),
+    &echo.Request{
+        Content: "Some content",
+    },
+)
+if err != nil {
+    log.Print(err)
+}
+
+fmt.Print("Response:", response.Content)
+```
 
 ## Prepare service environment and configuration
 
@@ -63,6 +93,18 @@ make build
 
 ```sh
 make deploy
+```
+
+## Build CLI utility on Linux
+
+```sh
+make compile
+```
+
+## Build CLI utility on Mac OS
+
+```sh
+GOOS=darwin make compile
 ```
 
 ## Run the utility with simple ping
