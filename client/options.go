@@ -36,8 +36,9 @@ func DialOptions(cfg *Config, opts ...grpc.DialOption) []grpc.DialOption {
 			grpc.WaitForReady(cfg.WaitForReady),
 		),
 		grpc.WithKeepaliveParams(keepalive.ClientParameters{
-			Time:    time.Duration(cfg.Keepalive.Time) * time.Second,
-			Timeout: time.Duration(cfg.Keepalive.Timeout) * time.Second,
+			Time:                time.Duration(cfg.Keepalive.Time) * time.Second,
+			Timeout:             time.Duration(cfg.Keepalive.Timeout) * time.Second,
+			PermitWithoutStream: cfg.Keepalive.Force,
 		}),
 	)
 }

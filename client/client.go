@@ -7,7 +7,10 @@ import (
 
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/balancer/roundrobin"
 	"google.golang.org/grpc/metadata"
+	"google.golang.org/grpc/resolver"
+	"google.golang.org/grpc/resolver/manual"
 )
 
 // Client provides access to the service using client connection
@@ -23,9 +26,32 @@ func New(cfg *Config, log *zap.Logger, opts ...grpc.DialOption) (*Client, error)
 		opts = append(opts, RetryOption(cfg))
 	}
 
+	var config string
+
+	if len(cfg.Sockets) > 0 {
+		if cfg.Balancer == roundrobin.Name {
+			config += fmt.Sprintf(`{
+			"loadBalancingConfig": [
+				{"%v": {}}
+			]
+		}`, roundrobin.Name)
+		}
+	} else {
+		cfg.Scheme = "dns"
+	}
+
+	// Initialize default service config
+	opts = append(opts, grpc.WithDefaultServiceConfig(config))
+
+	// Prepare resolver according to scheme
+	mr := manual.NewBuilderWithScheme(cfg.Scheme)
+	mr.InitialState(prepareResolverState(cfg.Sockets))
+
+	resolver.Register(mr)
+
 	// Set up a connection to the server.
 	conn, err := grpc.Dial(
-		fmt.Sprintf("%s:%d", cfg.Host, cfg.Port),
+		fmt.Sprintf("%s:///%s", cfg.Scheme, cfg.Host),
 		DialOptions(cfg, opts...)...,
 	)
 	if err != nil {
@@ -34,14 +60,19 @@ func New(cfg *Config, log *zap.Logger, opts ...grpc.DialOption) (*Client, error)
 
 	log.Info(
 		"Connected with config:",
+		zap.String("scheme", cfg.Scheme),
 		zap.String("host", cfg.Host),
-		zap.Int("port", cfg.Port),
+		zap.Any("sockets", cfg.Sockets),
+		zap.String("balancer", cfg.Balancer),
 		zap.Bool("insecure", cfg.Insecure),
 		zap.Bool("wait for ready", cfg.WaitForReady),
 		zap.Int("timeout (s)", cfg.Timeout),
-		zap.String("Retry reason", cfg.Retry.Reason.Primary),
-		zap.String("Retry reason for gRPC", cfg.Retry.Reason.GRPC),
-		zap.String("Retries count", strconv.Itoa(cfg.Retry.Count)),
+		zap.Int("keepalive time (s)", cfg.Keepalive.Time),
+		zap.Int("keepalive timeout (s)", cfg.Keepalive.Timeout),
+		zap.Bool("keepalive force ping", cfg.Keepalive.Force),
+		zap.String("retry reason", cfg.Retry.Reason.Primary),
+		zap.String("retry reason for gRPC", cfg.Retry.Reason.GRPC),
+		zap.String("retries count", strconv.Itoa(cfg.Retry.Count)),
 		zap.String("retries timeout (ms)", strconv.Itoa(cfg.Retry.Timeout*1000)),
 	)
 
@@ -79,4 +110,14 @@ func (c *Client) Shutdown(ctx context.Context) error {
 	}
 
 	return nil
+}
+
+func prepareResolverState(sockets []string) resolver.State {
+	addr := make([]resolver.Address, len(sockets))
+
+	for ind, val := range sockets {
+		addr[ind] = resolver.Address{Addr: val}
+	}
+
+	return resolver.State{Addresses: addr}
 }

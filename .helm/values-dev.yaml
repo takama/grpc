@@ -116,17 +116,21 @@ service:
     ## Time in seconds after which an idle connection would be closed by sending a GoAway.
     ## Zero means an infinity value
     idle: 0
+
     ## Time in seconds when a connection may exist before it will be closed by sending a GoAway.
     ## Zero means an infinity value
     age: 0
+
     ## Additive period in seconds after "age" which the connection will be forcibly closed.
     ## Zero means an infinity value
     grace: 0
+
     ## Keepalive parameters
     keepalive:
       ## After a duration of this time if the server doesn't see any activity it
       ## pings the client to see if the transport is still alive (seconds)
       time: 300
+
       ## After having pinged for keepalive check, the server waits timeout and
       ## if no activity is seen even after that the connection is closed (seconds)
       timeout: 10
@@ -134,34 +138,58 @@ service:
   ## Client connection to the service
   ##
   client:
+    ## Type of scheme used in grpc.Dial (dns, unix, etc)
+    scheme: grpc
+
+    ## Host used in target of grpc.Dial together with scheme (dns:///host)
     host: grpc.your-development-domain.net
-    port: 443
+
+    ## List of servers with ports used in balancing
+    sockets:
+      - "grpc.your-development-domain.net:443"
+      - "grpc.your-development-domain.net:443"
+
+    ## Type of balancing algorithm
+    balancer: "round_robin"
+
     ## use TLS or not
     insecure: false
+
     ## using of the Envoy proxy as a client balancer
     envoyProxy: true
+
     ## wait until gRPC stream will be ready
     waitForReady: true
+
     ## request maximum timeout in second
     timeout: 30
+
     ## Keepalive parameters
     keepalive:
       ## After a duration of this time if the client doesn't see any activity it
       ## pings the server to see if the transport is still alive (seconds)
       time: 10
+
       ## After having pinged for keepalive check, the client waits timeout and
       ## if no activity is seen even after that the connection is closed (seconds)
       timeout: 5
+
+      ## If true, client sends keepalive pings even with no active RPC.
+      force: false
+
     ## retry settings
     retry:
       ## reasons to retry in connection
       reason:
         ## x-envoy-retry-on
         primary: "5xx,connect-failure"
+
         ## x-envoy-retry-grpc-on
         grpc: "cancelled,deadline-exceeded,internal,resource-exhausted,unavailable"
+
       ## count of retries
       count: 30
+
       ## per retry maximum timeout in seconds
       timeout: 5
 
@@ -170,6 +198,7 @@ service:
   logger:
     ## logging format (available formats: json, txt)
     format: json
+
     ## logging level (0 - debug, 1 - info, 2 - warning, etc)
     level: 0
 

@@ -12,15 +12,23 @@ data:
   default.conf: |-
     {
       "client": {
+        "scheme": "{{ .Values.service.client.scheme }}",
         "host": "{{ .Values.service.client.host }}",
-        "port": {{ .Values.service.client.port }},
+        "sockets": [
+          {{- range $i, $value := .Values.service.client.sockets }}
+          {{- if gt $i 0 }},{{- end }}
+          "{{ $value }}"
+          {{- end }}
+        ],
+        "balancer": "{{ .Values.service.client.balancer }}",
         "insecure": {{ .Values.service.client.insecure }},
         "envoyProxy": {{ .Values.service.client.envoyProxy }},
         "waitForReady": {{ .Values.service.client.waitForReady }},
         "timeout": {{ .Values.service.client.timeout }},
         "keepalive": {
           "time": {{ .Values.service.client.keepalive.time }},
-          "timeout": {{ .Values.service.client.keepalive.timeout }}
+          "timeout": {{ .Values.service.client.keepalive.timeout }},
+          "force": {{ .Values.service.client.keepalive.force }}
         },
         "retry": {
           "reason": {
@@ -30,7 +38,7 @@ data:
           "count": {{ .Values.service.client.retry.count }},
           "timeout": {{ .Values.service.client.retry.timeout }}
         }
-    },
+      },
       "server": {
         "port": {{ .Values.service.grpc.port }},
         "connection": {

@@ -20,15 +20,16 @@ const (
 
 	DefaultConfigPath = "config/default.conf"
 
-	DefaultClientPort               = 8000
 	DefaultServerPort               = 8000
 	DefaultInfoPort                 = 8080
+	DefaultClientBalancer           = "round_robin"
 	DefaultClientInsecure           = false
 	DefaultClientEnvoyProxy         = false
 	DefaultClientWaitForReady       = false
 	DefaultClientTimeout            = 30
 	DefaultClientKeepAliveTime      = 10
 	DefaultClientKeepAliveTimeout   = 5
+	DefaultClientKeepAliveForce     = false
 	DefaultClientRetryReason        = "5xx"
 	DefaultClientRetryGRPCReason    = "unavailable"
 	DefaultClientRetryCount         = 30
@@ -56,8 +57,9 @@ type Config struct {
 func New() (*Config, error) {
 	cfg := &Config{
 		Client: client.Config{
+			Scheme:       ServiceName,
 			Host:         ClientServiceName,
-			Port:         DefaultClientPort,
+			Balancer:     DefaultClientBalancer,
 			Insecure:     DefaultClientInsecure,
 			EnvoyProxy:   DefaultClientEnvoyProxy,
 			WaitForReady: DefaultClientWaitForReady,
@@ -65,6 +67,7 @@ func New() (*Config, error) {
 			Keepalive: client.Keepalive{
 				Time:    DefaultClientKeepAliveTime,
 				Timeout: DefaultClientKeepAliveTimeout,
+				Force:   DefaultClientKeepAliveForce,
 			},
 			Retry: client.Retry{
 				Reason: client.Reason{
