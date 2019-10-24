@@ -2,8 +2,10 @@ package client
 
 // Config contains params to setup client connection
 type Config struct {
+	Scheme       string
 	Host         string
-	Port         int
+	Sockets      []string
+	Balancer     string
 	Insecure     bool
 	EnvoyProxy   bool
 	WaitForReady bool
@@ -29,4 +31,5 @@ type Reason struct {
 type Keepalive struct {
 	Time    int
 	Timeout int
+	Force   bool
 }

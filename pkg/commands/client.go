@@ -20,10 +20,13 @@ var clientCmd = &cobra.Command{
 func init() {
 	RootCmd.AddCommand(clientCmd)
 
+	clientCmd.PersistentFlags().String("scheme", config.ServiceName, "Client target scheme")
 	clientCmd.PersistentFlags().String("host", config.ClientServiceName, "Client service host")
-	clientCmd.PersistentFlags().Int("port", config.DefaultClientPort, "Client service port")
+	clientCmd.PersistentFlags().String("balancer", config.DefaultClientBalancer, "Client service balancer")
+	helper.LogF("Flag error", viper.BindPFlag("client.scheme", clientCmd.PersistentFlags().Lookup("scheme")))
 	helper.LogF("Flag error", viper.BindPFlag("client.host", clientCmd.PersistentFlags().Lookup("host")))
-	helper.LogF("Flag error", viper.BindPFlag("client.port", clientCmd.PersistentFlags().Lookup("port")))
+	helper.LogF("Flag error", viper.BindPFlag("client.balancer", clientCmd.PersistentFlags().Lookup("balancer")))
+	helper.LogF("Env error", viper.BindEnv("client.scheme"))
 	helper.LogF("Env error", viper.BindEnv("client.host"))
-	helper.LogF("Env error", viper.BindEnv("client.port"))
+	helper.LogF("Env error", viper.BindEnv("client.balancer"))
 }
