@@ -45,7 +45,7 @@ func New(cfg *Config, log *zap.Logger, opts ...grpc.DialOption) (*Client, error)
 
 	// Prepare resolver according to scheme
 	mr := manual.NewBuilderWithScheme(cfg.Scheme)
-	mr.InitialState(prepareResolverState(cfg.Sockets))
+	mr.InitialState(prepareResolverState(cfg.Scheme, cfg.Sockets))
 
 	resolver.Register(mr)
 
@@ -112,11 +112,14 @@ func (c *Client) Shutdown(ctx context.Context) error {
 	return nil
 }
 
-func prepareResolverState(sockets []string) resolver.State {
+func prepareResolverState(scheme string, sockets []string) resolver.State {
 	addr := make([]resolver.Address, len(sockets))
 
 	for ind, val := range sockets {
-		addr[ind] = resolver.Address{Addr: val}
+		addr[ind] = resolver.Address{
+			Addr:       val,
+			ServerName: fmt.Sprintf("%s-%d", scheme, ind),
+		}
 	}
 
 	return resolver.State{Addresses: addr}
