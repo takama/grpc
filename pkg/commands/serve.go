@@ -34,13 +34,17 @@ func init() {
 	serveCmd.PersistentFlags().Int("server-port", config.DefaultServerPort, "Service listening port number")
 	serveCmd.PersistentFlags().Int("info-port", config.DefaultInfoPort, "Health port number")
 	serveCmd.PersistentFlags().Bool("info-statistics", config.DefaultInfoStatistics, "Collect statistics information")
+	serveCmd.PersistentFlags().Int("grace-period", config.DefaultGracePeriod, "Service termination grace period")
 	helper.LogF("Flag error",
 		viper.BindPFlag("server.port", serveCmd.PersistentFlags().Lookup("server-port")))
 	helper.LogF("Flag error",
 		viper.BindPFlag("info.port", serveCmd.PersistentFlags().Lookup("info-port")))
 	helper.LogF("Flag error",
 		viper.BindPFlag("info.statistics", serveCmd.PersistentFlags().Lookup("info-statistics")))
+	helper.LogF("Flag error",
+		viper.BindPFlag("system.grace.period", serveCmd.PersistentFlags().Lookup("grace-period")))
 	helper.LogF("Env error", viper.BindEnv("server.port"))
 	helper.LogF("Env error", viper.BindEnv("info.port"))
 	helper.LogF("Env error", viper.BindEnv("info.statistics"))
+	helper.LogF("Env error", viper.BindEnv("system.grace.period"))
 }

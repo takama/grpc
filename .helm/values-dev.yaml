@@ -32,7 +32,7 @@ image:
   ##
   registry: gcr.io/drs-017
   name: grpc
-  tag: v0.0.0
+  tag: v0.1.0
 
   ## Docker Registry/Hub auth secret name, always use `registry-pull-secret` if registry inside if k8s
   ##
@@ -42,60 +42,40 @@ image:
   ##
   pullPolicy: Always
 
+## Ingress (Contour) - Ingress controller with Envoy
+## to proxy all services via 1 IP address.
+##
 ingress:
   ## If true, Ingress will be created
   ##
-  enabled: false
-  tls:
-    enabled: false
+  enabled: true
 
-  ## Prefix for API (Example: /api/v1/)
+  ## TLS configs
   ##
-  prefix: /
+  tls:
+    ##
+    enabled: true
+    ##
+    secretName: grpc-service-tls
 
-  ## Ingress annotations (e.g. `Let's encrypt` annotations to generating certs)
+  ## Annotations
   ##
   annotations:
-    ## kubernetes.io/ingress.class: nginx
-    ## kubernetes.io/tls-acme: 'true'
-    prometheus.io/probe: 'true'
+    contour.heptio.com/ingress.class: contour
+    contour.heptio.com/tls-minimum-protocol-version: TLSv1_2
+    kubernetes.io/ingress.allow-http: false
 
-  ## Ingress host feature allow access to service through host
-  ## example: https://hostname
-  ## Must be provided if Ingress is enabled
+  ## Ingress route hosts
   ##
-  hostBased:
-    hosts:
-    - grpc.example.net
-
-    ## Ingress TLS configuration
-    ## Secrets must be manually created in the namespace
-    ##
-    tls:
-    - secretName: grpc.example.net-secret
-      hosts:
-      - grpc.example.net
-
-  # ## Ingress path feature allow access to service through path
-  # ## example: https://hostname/namespace/servicename
-  # ## Must be provided if Ingress is enabled
-  # ##
-  pathBased:
-    hosts:
-    - services.example.net
-
-    ## Ingress TLS configuration
-    ## Secrets must be manually created in the namespace
-    ## except of case when annotatoon `kubernetes.io/tls-acme: 'true'` is present
-    ##
-    tls:
-    - secretName: services.example.net-secret
-      hosts:
-      - services.example.net
+  hosts:
+    ## gRPC service host
+    - name: grpc
+      host: grpc.your-development-domain.net
+      path: /
+      port: 8000
 
 service:
-  ## App container name
-  ##
+  ## App name service
   name: grpc
 
   ## Service Type
@@ -103,30 +83,20 @@ service:
   ## For GKE - LoadBalancer
   ## elsewhere - ClusterIP
   ##
-  type: LoadBalancer
-
-  ## Static IP of load balancer
-  ##
-  # loadBalancerIP: "133.133.133.133"
-
-  ## IP ranges with access to the service (via load balancer)
-  ## By default, all have access to it (if the list is empty)
-  ##
-  # loadBalancerSourceRanges:
-  # - 100.100.100.32/32 # VPN
+  type: ClusterIP
 
   ## Service annotations (e.g. Prometheus annotations)
   ##
   annotations:
-    prometheus.io/scrape: 'true'
-    prometheus.io/probe: 'true'
-    prometheus.io/port: '8080'
-    prometheus.io/path: '/metrics'
+    prometheus.io/probe: "true"
+    prometheus.io/probe-path: "/v1/health"
+    prometheus.io/probe-scheme: "http"
+    contour.heptio.com/upstream-protocol.h2c: "8000,grpc"
 
-  ## gRPC protocol attributes
+  ## gRPC attributes
   ##
   grpc:
-    ## gRPC exposed port
+    ## gRPC port
     ##
     port: 8000
 
@@ -136,16 +106,99 @@ service:
     ## Pod exposed info/health port
     ##
     port: 8080
-
-    ## Include a statistics in information details
+    ## Service statistics
     ##
-    statistics: true
+    statistics: false
+
+  ## Service connection parameters
+  ##
+  connection:
+    ## Time in seconds after which an idle connection would be closed by sending a GoAway.
+    ## Zero means an infinity value
+    idle: 0
+
+    ## Time in seconds when a connection may exist before it will be closed by sending a GoAway.
+    ## Zero means an infinity value
+    age: 0
+
+    ## Additive period in seconds after "age" which the connection will be forcibly closed.
+    ## Zero means an infinity value
+    grace: 0
+
+    ## Keepalive parameters
+    keepalive:
+      ## After a duration of this time if the server doesn't see any activity it
+      ## pings the client to see if the transport is still alive (seconds)
+      time: 300
+
+      ## After having pinged for keepalive check, the server waits timeout and
+      ## if no activity is seen even after that the connection is closed (seconds)
+      timeout: 10
+
+  ## Client connection to the service
+  ##
+  client:
+    ## Type of scheme used in grpc.Dial (dns, unix, etc)
+    scheme: grpc
+
+    ## Host used in target of grpc.Dial together with scheme (dns:///host)
+    host: grpc.your-development-domain.net
+
+    ## List of servers with ports used in balancing
+    sockets:
+      - "grpc.your-development-domain.net:443"
+      - "grpc.your-development-domain.net:443"
+
+    ## Type of balancing algorithm
+    balancer: "round_robin"
+
+    ## use TLS or not
+    insecure: false
+
+    ## using of the Envoy proxy as a client balancer
+    envoyProxy: true
+
+    ## wait until gRPC stream will be ready
+    waitForReady: true
+
+    ## request maximum timeout in second
+    timeout: 30
+
+    ## Keepalive parameters
+    keepalive:
+      ## After a duration of this time if the client doesn't see any activity it
+      ## pings the server to see if the transport is still alive (seconds)
+      time: 10
+
+      ## After having pinged for keepalive check, the client waits timeout and
+      ## if no activity is seen even after that the connection is closed (seconds)
+      timeout: 5
+
+      ## If true, client sends keepalive pings even with no active RPC.
+      force: false
+
+    ## retry settings
+    retry:
+      ## reasons to retry in connection
+      reason:
+        ## x-envoy-retry-on
+        primary: "5xx,connect-failure"
+
+        ## x-envoy-retry-grpc-on
+        grpc: "cancelled,deadline-exceeded,internal,resource-exhausted,unavailable"
+
+      ## count of retries
+      count: 30
+
+      ## per retry maximum timeout in seconds
+      timeout: 5
 
   ## Logger format and level
   ##
   logger:
     ## logging format (available formats: json, txt)
     format: json
+
     ## logging level (0 - debug, 1 - info, 2 - warning, etc)
     level: 0
 
@@ -162,7 +215,7 @@ livenessProbe:
   failureThreshold: 3
 
 readinessProbe:
-  ## Rediness Probe
+  ## Readiness Probe
   ## If enabled k8s check http end-point /readyz for "Ok" status 200
   ##
   enabled: true

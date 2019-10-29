@@ -5,7 +5,10 @@ import (
 	"fmt"
 	"net"
 
+	"github.com/takama/grpc/client"
+	"github.com/takama/grpc/contracts/echo"
 	"github.com/takama/grpc/contracts/info"
+
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 )
@@ -15,15 +18,19 @@ type Server struct {
 	cfg *Config
 	log *zap.Logger
 	srv *grpc.Server
+	cl  *client.Client
 	is  *infoServer
+	es  *echoServer
 }
 
 // New creates a new core server
-func New(ctx context.Context, cfg *Config, log *zap.Logger) (*Server, error) {
+func New(ctx context.Context, cl *client.Client, cfg *Config, log *zap.Logger) (*Server, error) {
 	return &Server{
 		cfg: cfg,
 		log: log,
+		cl:  cl,
 		is:  new(infoServer),
+		es:  &echoServer{cl: cl, log: log},
 	}, nil
 }
 
@@ -39,10 +46,10 @@ func (s Server) ReadinessProbe() error {
 
 // Run starts the server
 func (s *Server) Run(ctx context.Context) error {
-
 	// Register gRPC server
-	s.srv = grpc.NewServer()
+	s.srv = grpc.NewServer(Options(s.cfg)...)
 	info.RegisterInfoServer(s.srv, s.is)
+	echo.RegisterEchoServer(s.srv, s.es)
 
 	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", s.cfg.Port))
 	if err != nil {
@@ -56,6 +63,10 @@ func (s *Server) Run(ctx context.Context) error {
 func (s Server) Shutdown(ctx context.Context) error {
 	if s.srv != nil {
 		s.srv.GracefulStop()
+	}
+
+	if s.cl != nil {
+		return s.cl.Shutdown(ctx)
 	}
 
 	return nil

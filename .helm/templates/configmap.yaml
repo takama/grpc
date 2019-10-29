@@ -11,12 +11,54 @@ metadata:
 data:
   default.conf: |-
     {
+      "client": {
+        "scheme": "{{ .Values.service.client.scheme }}",
+        "host": "{{ .Values.service.client.host }}",
+        "sockets": [
+          {{- range $i, $value := .Values.service.client.sockets }}
+          {{- if gt $i 0 }},{{- end }}
+          "{{ $value }}"
+          {{- end }}
+        ],
+        "balancer": "{{ .Values.service.client.balancer }}",
+        "insecure": {{ .Values.service.client.insecure }},
+        "envoyProxy": {{ .Values.service.client.envoyProxy }},
+        "waitForReady": {{ .Values.service.client.waitForReady }},
+        "timeout": {{ .Values.service.client.timeout }},
+        "keepalive": {
+          "time": {{ .Values.service.client.keepalive.time }},
+          "timeout": {{ .Values.service.client.keepalive.timeout }},
+          "force": {{ .Values.service.client.keepalive.force }}
+        },
+        "retry": {
+          "reason": {
+            "primary": "{{ .Values.service.client.retry.reason.primary }}",
+            "grpc": "{{ .Values.service.client.retry.reason.grpc }}"
+          },
+          "count": {{ .Values.service.client.retry.count }},
+          "timeout": {{ .Values.service.client.retry.timeout }}
+        }
+      },
       "server": {
-        "port": {{ .Values.service.grpc.port }}
+        "port": {{ .Values.service.grpc.port }},
+        "connection": {
+          "idle": {{ .Values.service.connection.idle }},
+          "age": {{ .Values.service.connection.age }},
+          "grace": {{ .Values.service.connection.grace }},
+          "keepalive": {
+            "time": {{ .Values.service.connection.keepalive.time }},
+            "timeout": {{ .Values.service.connection.keepalive.timeout }}
+          }
+        }
       },
       "info": {
         "port": {{ .Values.service.info.port }},
         "statistics": {{ .Values.service.info.statistics }}
+      },
+      "system": {
+          "grace": {
+              "period": {{ .Values.gracePeriod }}
+          }
       },
       "logger": {
         "format": "{{ .Values.service.logger.format }}",

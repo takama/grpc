@@ -61,6 +61,7 @@ const (
 )
 
 // New creates and configure new zap logger
+// nolint: funlen
 func New(cfg *Config) *zap.Logger {
 	// Define our level-handling logic.
 	highPriority := zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
@@ -77,6 +78,7 @@ func New(cfg *Config) *zap.Logger {
 	if cfg.Out != nil {
 		consoleDebugging = zapcore.Lock(cfg.Out)
 	}
+
 	if cfg.Err != nil {
 		consoleErrors = zapcore.Lock(cfg.Err)
 	}
@@ -101,6 +103,7 @@ func New(cfg *Config) *zap.Logger {
 
 	// Optimize console output for operators.
 	var encoder zapcore.Encoder
+
 	switch cfg.Format {
 	case JSONFormatter.String():
 		// Optimize console output for parsing.

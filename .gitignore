@@ -1,5 +1,5 @@
 /bin
 /certs
-/vendor
+/config/test.conf
 .coverprofile
 coverage.txt

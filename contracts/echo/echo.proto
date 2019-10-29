@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package echo;
+
+option go_package = "github.com/takama/grpc/contracts/echo";
+
+// Interface exported by the server
+service Echo {
+    rpc Ping (Request) returns (Response) {}
+    rpc Reverse (Request) returns (Response) {}
+}
+  
+
+// A Request message
+message Request {
+    // Content of the request
+    string content = 1;
+}
+
+// A Response message
+message Response {
+    // Content of the response
+    string content = 1;
+}

@@ -4,15 +4,15 @@ BIN = grpc
 SERVICE_NAME ?= $(shell echo "$(APP)" | tr - _)
 
 # Use the v0.0.0 tag for testing, it shouldn't clobber any release builds
-RELEASE ?= v0.0.0
+RELEASE ?= v0.1.0
 GOOS ?= linux
 GOARCH ?= amd64
 CA_DIR ?= certs
 
 # Configs for GKE
-GKE_PROJECT_ID ?= drs-017
-GKE_PROJECT_ZONE ?= europe-west4-b
-GKE_CLUSTER_NAME ?= domingo-01
+GKE_PROJECT_ID ?= your-project-id
+GKE_PROJECT_ZONE ?= europe-west1-b
+GKE_CLUSTER_NAME ?= your-cluster-name
 
 KUBE_CONTEXT ?= gke_$(GKE_PROJECT_ID)_$(GKE_PROJECT_ZONE)_$(GKE_CLUSTER_NAME)
 

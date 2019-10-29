@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/takama/grpc/client"
 	"github.com/takama/grpc/pkg/config"
 	"github.com/takama/grpc/pkg/info"
 	"github.com/takama/grpc/pkg/logger"
@@ -30,8 +31,14 @@ func Run(cfg *config.Config) error {
 		zap.String("version", version.RELEASE+"-"+version.COMMIT+"-"+version.BRANCH),
 	)
 
+	// Create new gRPC client connection
+	cl, err := client.New(&cfg.Client, log)
+	if err != nil {
+		return err
+	}
+
 	// Create new core server
-	srv, err := server.New(context.Background(), &cfg.Server, log)
+	srv, err := server.New(context.Background(), cl, &cfg.Server, log)
 	if err != nil {
 		return err
 	}
@@ -46,8 +53,10 @@ func Run(cfg *config.Config) error {
 
 	// Setup operator with info/health-check server, core server and data store
 	operator := system.NewOperator(
-		infoServer,
+		&cfg.System,
 		srv,
+		cl,
+		infoServer,
 	)
 
 	// Run core server

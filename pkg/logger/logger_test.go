@@ -71,11 +71,14 @@ func TestLevel(t *testing.T) {
 		if l.level.String() != l.str {
 			t.Errorf("Expected level %s, got %s", l.str, l.level.String())
 		}
+
 		if zapLevelConverter(l.level) > zap.FatalLevel || zapLevelConverter(l.level) < zap.DebugLevel {
 			t.Errorf("Got incorrect data for %s log level", l.level.String())
 		}
 	}
+
 	level := zapLevelConverter(customLevel)
+
 	if level != zap.InfoLevel {
 		t.Errorf("invalid log level:\ngot:  %s\nwant: %s", level, zap.InfoLevel)
 	}
@@ -116,12 +119,17 @@ func TestLog(t *testing.T) {
 	})
 
 	want := "\u001b[35mDEBUG\u001b[0m\tIs text correct?\n"
+
 	log.Debug("Is text correct?")
+
 	got := b.String()
+
 	if got != want {
 		t.Errorf("Incorrect logger text output:\ngot:  %s\nwant: %s", got, want)
 	}
+
 	b.Reset()
+
 	log = New(&Config{
 		Format: JSONFormatter.String(),
 		Level:  LevelWarn,
@@ -131,6 +139,7 @@ func TestLog(t *testing.T) {
 	log.Warn("Is JSON correct?", zap.String("text", "correct"))
 	got = b.String()
 	want = "{\"level\":\"warn\",\"msg\":\"Is JSON correct?\",\"text\":\"correct\"}\n"
+
 	if got != want {
 		t.Errorf("Incorrect logger JSON output:\ngot:  %s\nwant: %s", got, want)
 	}
