@@ -40,12 +40,14 @@ fi
 if [ "${GO_OS}" == "darwin" ]; then
     sed -i '' -e "s/\(RELEASE ?= \).*/\1$new_version/" Makefile
     sed -i '' -e "s/\(version:\)\(\s*\).*/\1 $new_version/" .helm/Chart.yaml
+    sed -i '' -e "s/\(tag:\)\(\s*\).*/\1 $new_version/" .helm/values-test.yaml
     sed -i '' -e "s/\(tag:\)\(\s*\).*/\1 $new_version/" .helm/values-dev.yaml
     sed -i '' -e "s/\(tag:\)\(\s*\).*/\1 $new_version/" .helm/values-prod.yaml
     sed -i '' -e "s/\(# Version\)\(\s*\).*/\1 $new_version/" docs/CHANGELOG.md
 else
     sed -i -e "s/\(RELEASE ?= \).*/\1$new_version/" Makefile
     sed -i -e "s/\(version:\)\(\s*\).*/\1 $new_version/" .helm/Chart.yaml
+    sed -i -e "s/\(tag:\)\(\s*\).*/\1 $new_version/" .helm/values-test.yaml
     sed -i -e "s/\(tag:\)\(\s*\).*/\1 $new_version/" .helm/values-dev.yaml
     sed -i -e "s/\(tag:\)\(\s*\).*/\1 $new_version/" .helm/values-prod.yaml
     sed -i -e "s/\(# Version\)\(\s*\).*/\1 $new_version/" docs/CHANGELOG.md
