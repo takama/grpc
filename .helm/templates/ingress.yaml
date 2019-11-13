@@ -6,13 +6,14 @@
 {{- $chart := .Chart }}
 {{- $ingress := .Values.ingress }}
 
+{{- if .Values.ingress.contour.enabled -}}
 {{- range $key, $service := .Values.ingress.hosts }}
 ---
 apiVersion: contour.heptio.com/v1beta1
 kind: IngressRoute
 metadata:
   annotations:
-  {{- range $key, $value := $ingress.annotations }}
+  {{- range $key, $value := $ingress.contour.annotations }}
     {{ $key }}: {{ $value | quote }}
   {{- end }}
   labels:
@@ -35,5 +36,37 @@ spec:
         - name: {{ $service.name }}
           port: {{ $service.port }}
 
+{{- end }}
+{{- else }}
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+  {{- range $key, $value := $ingress.annotations }}
+    {{ $key }}: {{ $value | quote }}
+  {{- end }}
+  labels:
+    app: {{ $fullname }}
+    chart: "{{ $chart.Name }}-{{ $chart.Version }}"
+    component: "{{ $serviceName }}"
+    heritage: "{{ $release.Service }}"
+    release: "{{ $release.Name }}"
+  name: {{ $name }}
+spec:
+  {{- if $ingress.tls.enabled }}
+  tls:
+  - secretName: {{ $ingress.tls.secretName }}
+  {{- end }}
+  rules:
+  {{- range $key, $service := .Values.ingress.hosts }}
+  - host: {{ $service.host }}
+    http:
+      paths:
+      - path: {{ $service.path }}
+        backend:
+          serviceName: {{ $service.name }}
+          servicePort: {{ $service.port }}
+  {{- end }}
 {{- end }}
 {{- end -}}

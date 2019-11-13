@@ -5,11 +5,11 @@ import (
 	"crypto/tls"
 	"io/ioutil"
 	"log"
+	"strings"
 	"time"
 
-	grpc_retry "github.com/grpc-ecosystem/go-grpc-middleware/retry"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/backoff"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/keepalive"
 )
@@ -26,8 +26,16 @@ func DialOptions(cfg *Config, opts ...grpc.DialOption) []grpc.DialOption {
 		tlsOption = grpc.WithInsecure()
 	}
 
-	if !cfg.EnvoyProxy {
-		opts = append(opts, grpc.WithBackoffMaxDelay(time.Duration(cfg.Timeout)*time.Second))
+	if cfg.Retry.Active {
+		opts = append(opts, grpc.WithConnectParams(grpc.ConnectParams{
+			MinConnectTimeout: time.Duration(cfg.Timeout) * time.Second,
+			Backoff: backoff.Config{
+				BaseDelay:  time.Duration(cfg.Retry.Backoff.Delay.Min) * time.Second,
+				Multiplier: cfg.Retry.Backoff.Multiplier,
+				Jitter:     cfg.Retry.Backoff.Jitter,
+				MaxDelay:   time.Duration(cfg.Retry.Backoff.Delay.Max) * time.Second,
+			},
+		}))
 	}
 
 	return append(opts,
@@ -40,27 +48,6 @@ func DialOptions(cfg *Config, opts ...grpc.DialOption) []grpc.DialOption {
 			Timeout:             time.Duration(cfg.Keepalive.Timeout) * time.Second,
 			PermitWithoutStream: cfg.Keepalive.Force,
 		}),
-	)
-}
-
-// RetryOption gives option to reconnect to auth service
-func RetryOption(cfg *Config) grpc.DialOption {
-	opts := []grpc_retry.CallOption{
-		grpc_retry.WithMax(uint(cfg.Retry.Count)),
-		grpc_retry.WithCodes(
-			codes.Canceled,
-			codes.DeadlineExceeded,
-			codes.ResourceExhausted,
-			codes.FailedPrecondition,
-			codes.Aborted,
-			codes.Internal,
-			codes.Unavailable,
-			codes.DataLoss,
-		),
-	}
-
-	return grpc.WithUnaryInterceptor(
-		grpc_retry.UnaryClientInterceptor(opts...),
 	)
 }
 
@@ -92,7 +79,7 @@ func TokenOption(active bool, path string) grpc.DialOption {
 
 	return grpc.WithPerRPCCredentials(
 		tokenAuth{
-			token: string(token),
+			token: strings.TrimSpace(string(token)),
 		},
 	)
 }
