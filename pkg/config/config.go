@@ -20,28 +20,33 @@ const (
 
 	DefaultConfigPath = "config/default.conf"
 
-	DefaultServerPort               = 8000
-	DefaultInfoPort                 = 8080
-	DefaultClientBalancer           = "round_robin"
-	DefaultClientInsecure           = false
-	DefaultClientEnvoyProxy         = false
-	DefaultClientWaitForReady       = false
-	DefaultClientTimeout            = 30
-	DefaultClientKeepAliveTime      = 10
-	DefaultClientKeepAliveTimeout   = 5
-	DefaultClientKeepAliveForce     = false
-	DefaultClientRetryReason        = "5xx"
-	DefaultClientRetryGRPCReason    = "unavailable"
-	DefaultClientRetryCount         = 30
-	DefaultClientRetryTimeout       = 5
-	DefaultServerConnectionIdle     = 0
-	DefaultServerConnectionAge      = 0
-	DefaultServerConnectionAgeGrace = 0
-	DefaultServertKeepAliveTime     = 300
-	DefaultServerKeepAliveTimeout   = 10
-	DefaultGracePeriod              = 30
-	DefaultInfoStatistics           = true
-	DefaultLoggerLevel              = logger.LevelInfo
+	DefaultServerPort                 = 8000
+	DefaultInfoPort                   = 8080
+	DefaultClientBalancer             = "round_robin"
+	DefaultClientInsecure             = false
+	DefaultClientEnvoyProxy           = false
+	DefaultClientWaitForReady         = false
+	DefaultClientTimeout              = 15
+	DefaultClientKeepAliveTime        = 10
+	DefaultClientKeepAliveTimeout     = 5
+	DefaultClientKeepAliveForce       = false
+	DefaultClientRetryActive          = false
+	DefaultClientEnvoyRetryReason     = "5xx"
+	DefaultClientEnvoyRetryGRPCReason = "unavailable"
+	DefaultClientEnvoyRetryCount      = 30
+	DefaultClientEnvoyRetryTimeout    = 5
+	DefaultClientBackoffMultiplier    = 1.6
+	DefaultClientBackoffJitter        = 0.2
+	DefaultClientBackoffDelayMin      = 1
+	DefaultClientBackoffDelayMax      = 120
+	DefaultServerConnectionIdle       = 0
+	DefaultServerConnectionAge        = 0
+	DefaultServerConnectionAgeGrace   = 0
+	DefaultServertKeepAliveTime       = 300
+	DefaultServerKeepAliveTimeout     = 10
+	DefaultGracePeriod                = 30
+	DefaultInfoStatistics             = true
+	DefaultLoggerLevel                = logger.LevelInfo
 )
 
 // Config -- Base config structure
@@ -54,6 +59,7 @@ type Config struct {
 }
 
 // New - returns new config record initialized with default values
+// nolint: funlen
 func New() (*Config, error) {
 	cfg := &Config{
 		Client: client.Config{
@@ -70,12 +76,23 @@ func New() (*Config, error) {
 				Force:   DefaultClientKeepAliveForce,
 			},
 			Retry: client.Retry{
-				Reason: client.Reason{
-					Primary: DefaultClientRetryReason,
-					GRPC:    DefaultClientRetryGRPCReason,
+				Active: DefaultClientRetryActive,
+				Envoy: client.Envoy{
+					Reason: client.Reason{
+						Primary: DefaultClientEnvoyRetryReason,
+						GRPC:    DefaultClientEnvoyRetryGRPCReason,
+					},
+					Count:   DefaultClientEnvoyRetryCount,
+					Timeout: DefaultClientEnvoyRetryTimeout,
 				},
-				Count:   DefaultClientRetryCount,
-				Timeout: DefaultClientRetryTimeout,
+				Backoff: client.Backoff{
+					Multiplier: DefaultClientBackoffMultiplier,
+					Jitter:     DefaultClientBackoffJitter,
+					Delay: client.Delay{
+						Min: DefaultClientBackoffDelayMin,
+						Max: DefaultClientBackoffDelayMax,
+					},
+				},
 			},
 		},
 		Server: server.Config{
