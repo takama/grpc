@@ -22,18 +22,12 @@ type Client struct {
 
 // New gives a Client
 func New(cfg *Config, log *zap.Logger, opts ...grpc.DialOption) (*Client, error) {
-	if !cfg.EnvoyProxy {
-		opts = append(opts, RetryOption(cfg))
-	}
-
 	var config string
 
 	if len(cfg.Sockets) > 0 {
 		if cfg.Balancer == roundrobin.Name {
 			config += fmt.Sprintf(`{
-			"loadBalancingConfig": [
-				{"%v": {}}
-			]
+			"loadBalancingConfig": [{"%v": {}}]
 		}`, roundrobin.Name)
 		}
 	} else {
@@ -65,15 +59,21 @@ func New(cfg *Config, log *zap.Logger, opts ...grpc.DialOption) (*Client, error)
 		zap.Any("sockets", cfg.Sockets),
 		zap.String("balancer", cfg.Balancer),
 		zap.Bool("insecure", cfg.Insecure),
+		zap.Bool("used Envoy proxy", cfg.EnvoyProxy),
 		zap.Bool("wait for ready", cfg.WaitForReady),
 		zap.Int("timeout (s)", cfg.Timeout),
 		zap.Int("keepalive time (s)", cfg.Keepalive.Time),
 		zap.Int("keepalive timeout (s)", cfg.Keepalive.Timeout),
 		zap.Bool("keepalive force ping", cfg.Keepalive.Force),
-		zap.String("retry reason", cfg.Retry.Reason.Primary),
-		zap.String("retry reason for gRPC", cfg.Retry.Reason.GRPC),
-		zap.String("retries count", strconv.Itoa(cfg.Retry.Count)),
-		zap.String("retries timeout (ms)", strconv.Itoa(cfg.Retry.Timeout*1000)),
+		zap.Bool("Retry is active", cfg.Retry.Active),
+		zap.String("envoy proxy retry reason", cfg.Retry.Envoy.Reason.Primary),
+		zap.String("envoy proxy retry reason for gRPC", cfg.Retry.Envoy.Reason.GRPC),
+		zap.Int("envoy proxy retries count", cfg.Retry.Envoy.Count),
+		zap.Int("envoy proxy retry timeout (ms)", cfg.Retry.Envoy.Timeout*1000),
+		zap.Float64("backoff multiplier", cfg.Retry.Backoff.Multiplier),
+		zap.Float64("backoff jitter", cfg.Retry.Backoff.Jitter),
+		zap.Int("backoff min delay", cfg.Retry.Backoff.Delay.Min),
+		zap.Int("backoff max delay", cfg.Retry.Backoff.Delay.Max),
 	)
 
 	return &Client{
@@ -90,13 +90,13 @@ func (c *Client) Connection() *grpc.ClientConn {
 
 // Context returns context
 func (c *Client) Context(ctx context.Context) context.Context {
-	if c.cfg.EnvoyProxy {
+	if c.cfg.EnvoyProxy && c.cfg.Retry.Active {
 		return metadata.AppendToOutgoingContext(ctx,
-			"x-envoy-retry-on", c.cfg.Retry.Reason.Primary,
-			"x-envoy-retry-grpc-on", c.cfg.Retry.Reason.GRPC,
-			"x-envoy-max-retries", strconv.Itoa(c.cfg.Retry.Count),
+			"x-envoy-retry-on", c.cfg.Retry.Envoy.Reason.Primary,
+			"x-envoy-retry-grpc-on", c.cfg.Retry.Envoy.Reason.GRPC,
+			"x-envoy-max-retries", strconv.Itoa(c.cfg.Retry.Envoy.Count),
 			"x-envoy-upstream-rq-timeout-ms", strconv.Itoa(c.cfg.Timeout*1000),
-			"x-envoy-upstream-rq-per-try-timeout-ms", strconv.Itoa(c.cfg.Retry.Timeout*1000),
+			"x-envoy-upstream-rq-per-try-timeout-ms", strconv.Itoa(c.cfg.Retry.Envoy.Timeout*1000),
 		)
 	}
 

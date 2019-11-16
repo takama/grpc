@@ -11,6 +11,7 @@ import (
 
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/health/grpc_health_v1"
 )
 
 // Server contains core functionality of the service
@@ -20,6 +21,7 @@ type Server struct {
 	srv *grpc.Server
 	cl  *client.Client
 	is  *infoServer
+	hs  *healthServer
 	es  *echoServer
 }
 
@@ -30,6 +32,7 @@ func New(ctx context.Context, cl *client.Client, cfg *Config, log *zap.Logger) (
 		log: log,
 		cl:  cl,
 		is:  new(infoServer),
+		hs:  new(healthServer),
 		es:  &echoServer{cl: cl, log: log},
 	}, nil
 }
@@ -49,6 +52,7 @@ func (s *Server) Run(ctx context.Context) error {
 	// Register gRPC server
 	s.srv = grpc.NewServer(Options(s.cfg)...)
 	info.RegisterInfoServer(s.srv, s.is)
+	grpc_health_v1.RegisterHealthServer(s.srv, s.hs)
 	echo.RegisterEchoServer(s.srv, s.es)
 
 	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", s.cfg.Port))

@@ -26,7 +26,9 @@ spec:
     targetPort: {{ .Values.service.info.port }}
     protocol: TCP
     name: info
+{{- if .Values.service.headless }}
+  clusterIP: None
+{{- end }}
   selector:
     app: {{ .Values.service.name }}-{{ .Release.Namespace }}
   type: "{{ .Values.service.type }}"
-  clusterIP: None

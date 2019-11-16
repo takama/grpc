@@ -31,12 +31,23 @@ data:
           "force": {{ .Values.service.client.keepalive.force }}
         },
         "retry": {
-          "reason": {
-            "primary": "{{ .Values.service.client.retry.reason.primary }}",
-            "grpc": "{{ .Values.service.client.retry.reason.grpc }}"
+          "active": {{ .Values.service.client.retry.active }},
+          "envoy": {
+            "reason": {
+              "primary": "{{ .Values.service.client.retry.envoy.reason.primary }}",
+              "grpc": "{{ .Values.service.client.retry.envoy.reason.grpc }}"
+            },
+            "count": {{ .Values.service.client.retry.envoy.count }},
+            "timeout": {{ .Values.service.client.retry.envoy.timeout }}
           },
-          "count": {{ .Values.service.client.retry.count }},
-          "timeout": {{ .Values.service.client.retry.timeout }}
+          "backoff": {
+            "multiplier": {{ .Values.service.client.retry.backoff.multiplier }},
+            "jitter": {{ .Values.service.client.retry.backoff.jitter }},
+            "delay": {
+              "min": {{ .Values.service.client.retry.backoff.delay.min }},
+              "max": {{ .Values.service.client.retry.backoff.delay.max }}
+            }
+          }
         }
       },
       "server": {

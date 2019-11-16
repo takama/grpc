@@ -1,4 +1,10 @@
-# Version v0.1.0
+# Version v0.1.1
+
+## v0.1.1
+
+- Added gRPC health check  [Issue #26](https://github.com/takama/grpc/issues/26) ([takama](https://github.com/takama))
+- Added ability to use retry as an option [Issue #25](https://github.com/takama/grpc/issues/25) ([takama](https://github.com/takama))
+- Added exponential backoff parameters [Issue #23](https://github.com/takama/grpc/issues/23) ([takama](https://github.com/takama))
 
 ## v0.1.0
 

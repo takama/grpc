@@ -32,7 +32,7 @@ image:
   ##
   registry: gcr.io/drs-017
   name: grpc
-  tag: v0.1.0
+  tag: v0.1.1
 
   ## Docker Registry/Hub auth secret name, always use `registry-pull-secret` if registry inside if k8s
   ##
@@ -50,6 +50,15 @@ ingress:
   ##
   enabled: true
 
+  ## Use Contour ingress routes
+  ##
+  contour:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.allow-http: false
+      contour.heptio.com/ingress.class: contour
+      contour.heptio.com/tls-minimum-protocol-version: TLSv1_2
+
   ## TLS configs
   ##
   tls:
@@ -61,9 +70,8 @@ ingress:
   ## Annotations
   ##
   annotations:
-    contour.heptio.com/ingress.class: contour
-    contour.heptio.com/tls-minimum-protocol-version: TLSv1_2
-    kubernetes.io/ingress.allow-http: false
+    ## Uses reserved external IP name
+    kubernetes.io/ingress.global-static-ip-name: grpc-lb
 
   ## Ingress route hosts
   ##
@@ -80,10 +88,15 @@ service:
 
   ## Service Type
   ## For minikube, recommended value NodePort,
-  ## For GKE - LoadBalancer
+  ## For GKE - LoadBalancer in case of TCP or NodePort in case of HTTP
   ## elsewhere - ClusterIP
   ##
   type: ClusterIP
+
+  ## Headless service
+  ##
+  ## if true it could not use Cluster IP
+  headless: true
 
   ## Service annotations (e.g. Prometheus annotations)
   ##
@@ -91,6 +104,10 @@ service:
     prometheus.io/probe: "true"
     prometheus.io/probe-path: "/v1/health"
     prometheus.io/probe-scheme: "http"
+    ## Allows to use HTTP/2 for named port
+    ## cloud.google.com/app-protocols: '{"grpc":"HTTP2"}'
+    ## Enables container-native load balancing
+    ## cloud.google.com/neg: '{"ingress": true}'
     contour.heptio.com/upstream-protocol.h2c: "8000,grpc"
 
   ## gRPC attributes
@@ -179,19 +196,39 @@ service:
 
     ## retry settings
     retry:
-      ## reasons to retry in connection
-      reason:
-        ## x-envoy-retry-on
-        primary: "5xx,connect-failure"
+      ## If active it will use in all connections
+      active: true
 
-        ## x-envoy-retry-grpc-on
-        grpc: "cancelled,deadline-exceeded,internal,resource-exhausted,unavailable"
+      ## Envoy retries parameters
+      envoy:
+        ## reasons to retry in connection
+        reason:
+          ## x-envoy-retry-on
+          primary: "5xx,connect-failure"
 
-      ## count of retries
-      count: 30
+          ## x-envoy-retry-grpc-on
+          grpc: "cancelled,deadline-exceeded,internal,resource-exhausted,unavailable"
 
-      ## per retry maximum timeout in seconds
-      timeout: 5
+        ## count of retries
+        count: 30
+
+        ## per retry maximum timeout in seconds
+        timeout: 5
+
+      ## exponential backoff attributes
+      backoff:
+        ## multiplier is the factor with which to multiply backoff(s) after a
+        ## failed retry. Should ideally be greater than 1
+        multiplier: 1.6
+
+        ## jitter is the factor with which backoff(s) are randomized
+        jitter: 0.2
+
+        ## Delays are the amounts of time to backoff after the first failure
+        ## and the upper bound of backoff delay
+        delay:
+          min: 1
+          max: 120
 
   ## Logger format and level
   ##

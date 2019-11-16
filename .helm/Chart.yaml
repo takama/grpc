@@ -1,6 +1,6 @@
 name: grpc
 description: A Helm charts for Kubernetes application
-version: v0.1.0
+version: v0.1.1
 sources:
   - https://github.com/takama/grpc
 engine: gotpl
