@@ -163,7 +163,7 @@ imports:
 
 lint: bootstrap
 	@echo "+ $@"
-	@golangci-lint run --enable-all --skip-dirs vendor ./...
+	@golangci-lint run --enable-all ./...
 
 HAS_RUNNED := $(shell docker ps | grep $(CONTAINER_NAME))
 HAS_EXITED := $(shell docker ps -a | grep $(CONTAINER_NAME))

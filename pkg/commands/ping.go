@@ -14,6 +14,9 @@ import (
 	"go.uber.org/zap"
 )
 
+// Timeout for ping command
+const timeoutPing = 300
+
 // pingCmd represents the ping command
 var pingCmd = &cobra.Command{
 	Use:   "ping",
@@ -32,7 +35,7 @@ var pingCmd = &cobra.Command{
 			count = v
 		}
 
-		ctx, cancel := context.WithTimeout(context.Background(), time.Second*300)
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second*timeoutPing)
 		defer cancel()
 
 		// Create new client
