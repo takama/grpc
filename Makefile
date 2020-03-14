@@ -4,7 +4,7 @@ BIN = grpc
 SERVICE_NAME ?= $(shell echo "$(APP)" | tr - _)
 
 # Use the v0.0.0 tag for testing, it shouldn't clobber any release builds
-RELEASE ?= v0.1.2
+RELEASE ?= v0.1.3
 GOOS ?= linux
 GOARCH ?= amd64
 CA_DIR ?= certs
@@ -163,7 +163,7 @@ imports:
 
 lint: bootstrap
 	@echo "+ $@"
-	@golangci-lint run --enable-all --skip-dirs vendor ./...
+	@golangci-lint run --enable-all ./...
 
 HAS_RUNNED := $(shell docker ps | grep $(CONTAINER_NAME))
 HAS_EXITED := $(shell docker ps -a | grep $(CONTAINER_NAME))

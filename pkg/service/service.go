@@ -68,6 +68,7 @@ func Run(cfg *config.Config) error {
 				err != http.ErrServerClosed {
 				log.Fatal(err.Error())
 			}
+
 			log.Error(err.Error())
 		}
 	}()
