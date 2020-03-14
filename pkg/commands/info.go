@@ -13,6 +13,9 @@ import (
 	"go.uber.org/zap"
 )
 
+// Timeout for info command
+const timeoutInfo = 5
+
 // infoCmd represents the info command
 var infoCmd = &cobra.Command{
 	Use:   "info",
@@ -25,7 +28,7 @@ Use --file or -f to specify JSON data file with batch requests`,
 		// nolint: errcheck
 		defer log.Sync()
 
-		ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second*timeoutInfo)
 		defer cancel()
 
 		// Create new client

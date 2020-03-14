@@ -14,6 +14,10 @@ import (
 	"google.golang.org/grpc/metadata"
 )
 
+const (
+	timeoutPingSleep = 200
+)
+
 type echoServer struct {
 	cl  *client.Client
 	log *zap.Logger
@@ -36,7 +40,7 @@ func (es echoServer) Ping(ctx context.Context, in *echo.Request) (*echo.Response
 		es.log.Error("ping: send header", zap.Error(err))
 	}
 
-	time.Sleep(time.Millisecond * 200)
+	time.Sleep(time.Millisecond * timeoutPingSleep)
 
 	return &echo.Response{Content: in.Content}, nil
 }

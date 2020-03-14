@@ -14,6 +14,9 @@ import (
 	"go.uber.org/zap"
 )
 
+// Timeout for reverse command
+const timeoutReverse = 5
+
 // reverseCmd represents a reverse ping command
 var reverseCmd = &cobra.Command{
 	Use:   "reverse",
@@ -32,7 +35,7 @@ var reverseCmd = &cobra.Command{
 			count = v
 		}
 
-		ctx, cancel := context.WithTimeout(context.Background(), time.Second*300)
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second*timeoutReverse)
 		defer cancel()
 
 		// Create new client
