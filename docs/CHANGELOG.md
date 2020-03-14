@@ -1,4 +1,12 @@
-# Version v0.1.2
+# Version v0.1.3
+
+## v0.1.3
+
+### Codebase changes in v0.1.3
+
+- New versions of protobuf, grpc, grpc-gateway, zap logger ([takama](https://github.com/takama))
+- Used new version of protoc generation ([takama](https://github.com/takama))
+- Fixed linter warnings ([takama](https://github.com/takama))
 
 ## v0.1.1
 
