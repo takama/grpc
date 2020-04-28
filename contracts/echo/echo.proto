@@ -2,12 +2,25 @@ syntax = "proto3";
 
 package echo;
 
+import "google/api/annotations.proto";
+
 option go_package = "github.com/takama/grpc/contracts/echo";
 
 // Interface exported by the server
 service Echo {
-    rpc Ping (Request) returns (Response) {}
-    rpc Reverse (Request) returns (Response) {}
+    rpc Ping (Request) returns (Response) {
+        option (google.api.http) = {
+            post: "/v1/ping",
+            body: "*"
+        };
+    }
+
+    rpc Reverse (Request) returns (Response) {
+        option (google.api.http) = {
+            post: "/v1/reverse",
+            body: "*"
+        };
+    }
 }
   
 
