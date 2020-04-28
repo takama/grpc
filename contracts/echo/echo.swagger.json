@@ -10,8 +10,83 @@
   "produces": [
     "application/json"
   ],
-  "paths": {},
+  "paths": {
+    "/v1/ping": {
+      "post": {
+        "operationId": "Echo_Ping",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/echoResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/echoRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Echo"
+        ]
+      }
+    },
+    "/v1/reverse": {
+      "post": {
+        "operationId": "Echo_Reverse",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/echoResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/echoRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Echo"
+        ]
+      }
+    }
+  },
   "definitions": {
+    "echoRequest": {
+      "type": "object",
+      "properties": {
+        "content": {
+          "type": "string",
+          "title": "Content of the request"
+        }
+      },
+      "title": "A Request message"
+    },
     "echoResponse": {
       "type": "object",
       "properties": {
