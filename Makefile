@@ -4,7 +4,7 @@ BIN = grpc
 SERVICE_NAME ?= $(shell echo "$(APP)" | tr - _)
 
 # Use the v0.0.0 tag for testing, it shouldn't clobber any release builds
-RELEASE ?= v0.1.3
+RELEASE ?= v0.1.4
 GOOS ?= linux
 GOARCH ?= amd64
 CA_DIR ?= certs
