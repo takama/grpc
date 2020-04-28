@@ -14,7 +14,7 @@
     "/v1/health": {
       "get": {
         "summary": "Get a health information for the service",
-        "operationId": "GetHealth",
+        "operationId": "Info_GetHealth",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -37,7 +37,7 @@
     "/v1/info": {
       "get": {
         "summary": "Get an information about the service",
-        "operationId": "GetInfo",
+        "operationId": "Info_GetInfo",
         "responses": {
           "200": {
             "description": "A successful response.",

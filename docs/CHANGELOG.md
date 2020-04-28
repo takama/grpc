@@ -1,4 +1,9 @@
-# Version v0.1.3
+# Version v0.1.4
+
+## v0.1.4
+
+- Added echo HTTP requests ([takama](https://github.com/takama))
+- Updated protobuf generation ([takama](https://github.com/takama))
 
 ## v0.1.3
 
