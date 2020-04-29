@@ -65,10 +65,10 @@ const (
 func New(cfg *Config) *zap.Logger {
 	// Define our level-handling logic.
 	highPriority := zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
-		return lvl >= zapcore.ErrorLevel && lvl >= zapLevelConverter(cfg.Level)
+		return lvl >= zapcore.ErrorLevel && lvl >= ZapLevelConverter(cfg.Level)
 	})
 	lowPriority := zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
-		return lvl < zapcore.ErrorLevel && lvl >= zapLevelConverter(cfg.Level)
+		return lvl < zapcore.ErrorLevel && lvl >= ZapLevelConverter(cfg.Level)
 	})
 
 	// High-priority output should go to standard error, and low-priority
@@ -128,7 +128,7 @@ func New(cfg *Config) *zap.Logger {
 	return zap.New(core)
 }
 
-func zapLevelConverter(level Level) zapcore.Level {
+func ZapLevelConverter(level Level) zapcore.Level {
 	switch level {
 	case LevelDebug:
 		return zap.DebugLevel

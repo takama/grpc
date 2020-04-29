@@ -1,22 +1,24 @@
-package system
+package system_test
 
 import (
 	"net/http"
 	"testing"
+
+	"github.com/takama/grpc/pkg/system"
 )
 
 func TestStubHandling(t *testing.T) {
-	operator := NewOperator(&Config{Grace: Grace{Period: 30}}, &http.Server{})
+	operator := system.NewOperator(&system.Config{Grace: system.Grace{Period: 30}}, &http.Server{})
 	err := operator.Reload()
 
-	if err != ErrNotImplemented {
-		t.Error("Expected error", ErrNotImplemented, "got", err)
+	if err != system.ErrNotImplemented {
+		t.Error("Expected error", system.ErrNotImplemented, "got", err)
 	}
 
 	err = operator.Maintenance()
 
-	if err != ErrNotImplemented {
-		t.Error("Expected error", ErrNotImplemented, "got", err)
+	if err != system.ErrNotImplemented {
+		t.Error("Expected error", system.ErrNotImplemented, "got", err)
 	}
 
 	errs := operator.Shutdown()
