@@ -1,4 +1,10 @@
-# Version v0.1.4
+# Version v0.1.5
+
+## v0.1.5
+
+### Codebase changes in v0.1.5
+
+- Fixed linter warnings ([takama](https://github.com/takama))
 
 ## v0.1.4
 
