@@ -1,4 +1,4 @@
-// Package commands contains global variables with configs and commands
+// Package commands contains global variables with configs and commands.
 // nolint: gochecknoglobals, gochecknoinits, dupl
 package commands
 
@@ -14,10 +14,10 @@ import (
 	"go.uber.org/zap"
 )
 
-// Timeout for reverse command
+// Timeout for reverse command.
 const timeoutReverse = 5
 
-// reverseCmd represents a reverse ping command
+// reverseCmd represents a reverse ping command.
 var reverseCmd = &cobra.Command{
 	Use:   "reverse",
 	Short: "Reverse ping client/serverice:services connection",

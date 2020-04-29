@@ -30,13 +30,13 @@ const (
 // of the legacy proto package is being used.
 const _ = proto.ProtoPackageIsVersion4
 
-// A Request message
+// A Request message.
 type Request struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Content of the request
+	// Content of the request.
 	Content string `protobuf:"bytes,1,opt,name=content,proto3" json:"content,omitempty"`
 }
 
@@ -79,13 +79,13 @@ func (x *Request) GetContent() string {
 	return ""
 }
 
-// A Response message
+// A Response message.
 type Response struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Content of the response
+	// Content of the response.
 	Content string `protobuf:"bytes,1,opt,name=content,proto3" json:"content,omitempty"`
 }
 

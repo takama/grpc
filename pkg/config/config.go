@@ -10,9 +10,9 @@ import (
 	"github.com/spf13/viper"
 )
 
-// Default values: host, port, etc
+// Default values: host, port, etc.
 const (
-	// ServiceName - default service name
+	// ServiceName - default service name.
 	ServiceName       = "grpc"
 	ClientServiceName = "grpc"
 
@@ -49,7 +49,7 @@ const (
 	DefaultLoggerLevel                = logger.LevelInfo
 )
 
-// Config -- Base config structure
+// Config -- Base config structure.
 type Config struct {
 	Client client.Config
 	Server server.Config
@@ -58,7 +58,7 @@ type Config struct {
 	System system.Config
 }
 
-// New - returns new config record initialized with default values
+// New - returns new config record initialized with default values.
 // nolint: funlen
 func New() (*Config, error) {
 	cfg := &Config{

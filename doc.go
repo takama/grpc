@@ -1,2 +1,2 @@
-// Package grpc provides documentation
+// Package grpc provides documentation.
 package grpc

@@ -18,7 +18,7 @@ import (
 
 var cfgFile string
 
-// RootCmd represents the base command when called without any subcommands
+// RootCmd represents the base command when called without any subcommands.
 var RootCmd = &cobra.Command{
 	Use:   "grpc",
 	Short: "Service short description",
@@ -55,13 +55,13 @@ func init() {
 	helper.LogF("Env error", viper.BindEnv("client.insecure"))
 }
 
-// initConfig reads in config file
+// initConfig reads in config file.
 func initConfig() {
-	// enable ability to specify config file via flag or via env
+	// enable ability to specify config file via flag or via env.
 	if cfgFile != "" {
 		viper.SetConfigFile(cfgFile)
 	} else
-	// Check for env variable with config path
+	// Check for env variable with config path.
 	if cfgPath := os.Getenv(
 		strings.ToUpper(strings.Replace(config.ServiceName, "-", "_", -1)) + "_CONFIG_PATH",
 	); cfgPath != "" {
