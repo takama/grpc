@@ -8,10 +8,10 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-// Level defines log levels
+// Level defines log levels.
 type Level int8
 
-// Log levels
+// Log levels.
 const (
 	LevelDebug Level = iota
 	LevelInfo
@@ -40,7 +40,7 @@ func (l Level) String() string {
 	}
 }
 
-// Formatter defines output formatter
+// Formatter defines output formatter.
 type Formatter int
 
 func (f Formatter) String() string {
@@ -54,13 +54,13 @@ func (f Formatter) String() string {
 	}
 }
 
-// Format of outputs
+// Format of outputs.
 const (
 	TextFormatter Formatter = iota
 	JSONFormatter
 )
 
-// New creates and configure new zap logger
+// New creates and configure new zap logger.
 // nolint: funlen
 func New(cfg *Config) *zap.Logger {
 	// Define our level-handling logic.

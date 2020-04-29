@@ -1,4 +1,4 @@
-// Package commands contains global variables with configs and commands
+// Package commands contains global variables with configs and commands.
 // nolint: gochecknoglobals, gochecknoinits
 package commands
 
@@ -13,10 +13,10 @@ import (
 	"go.uber.org/zap"
 )
 
-// Timeout for info command
+// Timeout for info command.
 const timeoutInfo = 5
 
-// infoCmd represents the info command
+// infoCmd represents the info command.
 var infoCmd = &cobra.Command{
 	Use:   "info",
 	Short: "Get information about service",

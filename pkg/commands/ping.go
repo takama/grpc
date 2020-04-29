@@ -1,4 +1,4 @@
-// Package commands contains global variables with configs and commands
+// Package commands contains global variables with configs and commands.
 // nolint: gochecknoglobals, gochecknoinits, dupl
 package commands
 
@@ -14,10 +14,10 @@ import (
 	"go.uber.org/zap"
 )
 
-// Timeout for ping command
+// Timeout for ping command.
 const timeoutPing = 300
 
-// pingCmd represents the ping command
+// pingCmd represents the ping command.
 var pingCmd = &cobra.Command{
 	Use:   "ping",
 	Short: "Ping client/server connection",
@@ -28,7 +28,7 @@ var pingCmd = &cobra.Command{
 		// nolint: errcheck
 		defer log.Sync()
 
-		// Read counts, initial value is 1
+		// Read counts, initial value is 1.
 		count := 1
 		countParam := cmd.Flag("count").Value.String()
 		if v, err := strconv.Atoi(countParam); err == nil {

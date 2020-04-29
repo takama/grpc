@@ -7,7 +7,7 @@ import (
 	"google.golang.org/grpc/keepalive"
 )
 
-// Options gives options that manage server connection parameters
+// Options gives options that manage server connection parameters.
 func Options(cfg *Config, opts ...grpc.ServerOption) []grpc.ServerOption {
 	return append(opts,
 		grpc.KeepaliveParams(keepalive.ServerParameters{

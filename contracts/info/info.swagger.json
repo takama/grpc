@@ -13,7 +13,7 @@
   "paths": {
     "/v1/health": {
       "get": {
-        "summary": "Get a health information for the service",
+        "summary": "Get a health information for the service.",
         "operationId": "Info_GetHealth",
         "responses": {
           "200": {
@@ -36,7 +36,7 @@
     },
     "/v1/info": {
       "get": {
-        "summary": "Get an information about the service",
+        "summary": "Get an information about the service.",
         "operationId": "Info_GetInfo",
         "responses": {
           "200": {
@@ -65,28 +65,28 @@
         "alive": {
           "type": "boolean",
           "format": "boolean",
-          "title": "Health state"
+          "description": "Health state."
         }
       },
-      "title": "A Health report about the service"
+      "description": "A Health report about the service."
     },
     "infoReport": {
       "type": "object",
       "properties": {
         "version": {
           "type": "string",
-          "title": "Version of the service"
+          "description": "Version of the service."
         },
         "date": {
           "type": "string",
-          "title": "Build date of the service"
+          "description": "Build date of the service."
         },
         "repo": {
           "type": "string",
-          "title": "Repository name"
+          "description": "Repository name."
         }
       },
-      "title": "A Report about the service"
+      "description": "A Report about the service."
     },
     "protobufAny": {
       "type": "object",

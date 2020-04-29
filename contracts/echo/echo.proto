@@ -6,7 +6,7 @@ import "google/api/annotations.proto";
 
 option go_package = "github.com/takama/grpc/contracts/echo";
 
-// Interface exported by the server
+// Interface exported by the server.
 service Echo {
     rpc Ping (Request) returns (Response) {
         option (google.api.http) = {
@@ -24,14 +24,14 @@ service Echo {
 }
   
 
-// A Request message
+// A Request message.
 message Request {
-    // Content of the request
+    // Content of the request.
     string content = 1;
 }
 
-// A Response message
+// A Response message.
 message Response {
-    // Content of the response
+    // Content of the response.
     string content = 1;
 }

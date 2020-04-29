@@ -31,17 +31,17 @@ const (
 // of the legacy proto package is being used.
 const _ = proto.ProtoPackageIsVersion4
 
-// A Report about the service
+// A Report about the service.
 type Report struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Version of the service
+	// Version of the service.
 	Version string `protobuf:"bytes,1,opt,name=version,proto3" json:"version,omitempty"`
-	// Build date of the service
+	// Build date of the service.
 	Date string `protobuf:"bytes,2,opt,name=date,proto3" json:"date,omitempty"`
-	// Repository name
+	// Repository name.
 	Repo string `protobuf:"bytes,3,opt,name=repo,proto3" json:"repo,omitempty"`
 }
 
@@ -98,13 +98,13 @@ func (x *Report) GetRepo() string {
 	return ""
 }
 
-// A Health report about the service
+// A Health report about the service.
 type Health struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Health state
+	// Health state.
 	Alive bool `protobuf:"varint,1,opt,name=alive,proto3" json:"alive,omitempty"`
 }
 
@@ -270,9 +270,9 @@ const _ = grpc.SupportPackageIsVersion6
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type InfoClient interface {
-	// Get an information about the service
+	// Get an information about the service.
 	GetInfo(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Report, error)
-	// Get a health information for the service
+	// Get a health information for the service.
 	GetHealth(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Health, error)
 }
 
@@ -304,9 +304,9 @@ func (c *infoClient) GetHealth(ctx context.Context, in *empty.Empty, opts ...grp
 
 // InfoServer is the server API for Info service.
 type InfoServer interface {
-	// Get an information about the service
+	// Get an information about the service.
 	GetInfo(context.Context, *empty.Empty) (*Report, error)
-	// Get a health information for the service
+	// Get a health information for the service.
 	GetHealth(context.Context, *empty.Empty) (*Health, error)
 }
 

@@ -14,24 +14,24 @@ const (
 	customSignalTypeString            = "777"
 )
 
-// testHandling implement simplest Operator interface
+// testHandling implement simplest Operator interface.
 type testHandling struct {
 	ch chan SignalType
 }
 
-// Reload implementation
+// Reload implementation.
 func (th testHandling) Reload() error {
 	th.ch <- Reload
 	return nil
 }
 
-// Maintenance implementation
+// Maintenance implementation.
 func (th testHandling) Maintenance() error {
 	th.ch <- Maintenance
 	return nil
 }
 
-// Shutdown implementation
+// Shutdown implementation.
 func (th testHandling) Shutdown() []error {
 	var errs []error
 	th.ch <- Shutdown
@@ -75,17 +75,17 @@ func TestSignals(t *testing.T) {
 		}
 	}()
 
-	// Prepare and send reload signal
+	// Prepare and send reload signal.
 	signals.Add(testSignal, Reload)
 	sendSignal(t, handling.ch, proc, Reload)
 	signals.Remove(testSignal, Reload)
 
-	// Prepare and send maintenance signal
+	// Prepare and send maintenance signal.
 	signals.Add(testSignal, Maintenance)
 	sendSignal(t, handling.ch, proc, Maintenance)
 	signals.Remove(testSignal, Maintenance)
 
-	// Prepare and send shutdown signal
+	// Prepare and send shutdown signal.
 	signals.Add(testSignal, Shutdown)
 	sendSignal(t, handling.ch, proc, Shutdown)
 	signals.Remove(testSignal, Shutdown)

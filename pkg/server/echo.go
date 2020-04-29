@@ -23,7 +23,7 @@ type echoServer struct {
 	log *zap.Logger
 }
 
-// Echo the content of the request
+// Echo the content of the request.
 func (es echoServer) Ping(ctx context.Context, in *echo.Request) (*echo.Response, error) {
 	es.log.Info("ping:", zap.String("Handling echo request", fmt.Sprintf("[%v] with context %v", in, ctx)))
 
@@ -45,7 +45,7 @@ func (es echoServer) Ping(ctx context.Context, in *echo.Request) (*echo.Response
 	return &echo.Response{Content: in.Content}, nil
 }
 
-// Reverse the content of the request
+// Reverse the content of the request.
 func (es echoServer) Reverse(ctx context.Context, in *echo.Request) (*echo.Response, error) {
 	es.log.Info("reverse:", zap.String("Handling reverse request", fmt.Sprintf("[%v] with context %v", in, ctx)))
 

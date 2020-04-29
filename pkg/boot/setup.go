@@ -8,7 +8,7 @@ import (
 	"go.uber.org/zap"
 )
 
-// Setup the configuration, logger
+// Setup the configuration, logger.
 func Setup() (*config.Config, *zap.Logger) {
 	cfg, err := config.New()
 	helper.LogF("Load config error", err)

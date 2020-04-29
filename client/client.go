@@ -14,18 +14,18 @@ import (
 )
 
 const (
-	// It represents timeout in 1000 ms = 1s
+	// It represents timeout in 1000 ms = 1s.
 	timeoutSecond int = 1000
 )
 
-// Client provides access to the service using client connection
+// Client provides access to the service using client connection.
 type Client struct {
 	cfg  *Config
 	log  *zap.Logger
 	conn *grpc.ClientConn
 }
 
-// New gives a Client
+// New gives a Client.
 func New(cfg *Config, log *zap.Logger, opts ...grpc.DialOption) (*Client, error) {
 	var config string
 
@@ -39,10 +39,10 @@ func New(cfg *Config, log *zap.Logger, opts ...grpc.DialOption) (*Client, error)
 		cfg.Scheme = "dns"
 	}
 
-	// Initialize default service config
+	// Initialize default service config.
 	opts = append(opts, grpc.WithDefaultServiceConfig(config))
 
-	// Prepare resolver according to scheme
+	// Prepare resolver according to scheme.
 	mr := manual.NewBuilderWithScheme(cfg.Scheme)
 	mr.InitialState(prepareResolverState(cfg.Scheme, cfg.Sockets))
 
@@ -88,12 +88,12 @@ func New(cfg *Config, log *zap.Logger, opts ...grpc.DialOption) (*Client, error)
 	}, nil
 }
 
-// Connection returns gRPC connection
+// Connection returns gRPC connection.
 func (c *Client) Connection() *grpc.ClientConn {
 	return c.conn
 }
 
-// Context returns context
+// Context returns context.
 func (c *Client) Context(ctx context.Context) context.Context {
 	if c.cfg.EnvoyProxy && c.cfg.Retry.Active {
 		return metadata.AppendToOutgoingContext(ctx,
@@ -108,7 +108,7 @@ func (c *Client) Context(ctx context.Context) context.Context {
 	return ctx
 }
 
-// Shutdown closes active Client connections
+// Shutdown closes active Client connections.
 func (c *Client) Shutdown(ctx context.Context) error {
 	if err := c.conn.Close(); err != nil {
 		c.log.Error("Connection close error:", zap.Error(err))

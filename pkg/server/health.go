@@ -8,10 +8,10 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-// Server for the Health Check gRPC API
+// Server for the Health Check gRPC API.
 type healthServer struct{}
 
-// Check is used for health checks
+// Check is used for health checks.
 func (hs *healthServer) Check(
 	ctx context.Context,
 	in *grpc_health_v1.HealthCheckRequest,
@@ -22,7 +22,7 @@ func (hs *healthServer) Check(
 	}, nil
 }
 
-// Watch is not implemented
+// Watch is not implemented.
 func (hs *healthServer) Watch(
 	in *grpc_health_v1.HealthCheckRequest,
 	srv grpc_health_v1.Health_WatchServer,
