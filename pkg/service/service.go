@@ -16,7 +16,7 @@ import (
 	"go.uber.org/zap"
 )
 
-// Run the service
+// Run the service.
 func Run(cfg *config.Config) error {
 	// Setup zap logger
 	log := logger.New(&cfg.Logger)
@@ -31,19 +31,19 @@ func Run(cfg *config.Config) error {
 		zap.String("version", version.RELEASE+"-"+version.COMMIT+"-"+version.BRANCH),
 	)
 
-	// Create new gRPC client connection
+	// Create new gRPC client connection.
 	cl, err := client.New(&cfg.Client, log)
 	if err != nil {
 		return err
 	}
 
-	// Create new core server
+	// Create new core server.
 	srv, err := server.New(context.Background(), cl, &cfg.Server, log)
 	if err != nil {
 		return err
 	}
 
-	// Register info/health-check service
+	// Register info/health-check service.
 	is := info.NewService(log)
 	is.RegisterLivenessProbe(srv.LivenessProbe)
 	is.RegisterReadinessProbe(srv.ReadinessProbe)
@@ -51,7 +51,7 @@ func Run(cfg *config.Config) error {
 	// Run info/health-check service
 	infoServer := is.Run(fmt.Sprintf(":%d", cfg.Info.Port))
 
-	// Setup operator with info/health-check server, core server and data store
+	// Setup operator with info/health-check server, core server and data store.
 	operator := system.NewOperator(
 		&cfg.System,
 		srv,
@@ -59,7 +59,7 @@ func Run(cfg *config.Config) error {
 		infoServer,
 	)
 
-	// Run core server
+	// Run core server.
 	go func() {
 		if err := srv.Run(context.Background()); err != nil {
 			// Check for known errors
@@ -73,6 +73,6 @@ func Run(cfg *config.Config) error {
 		}
 	}()
 
-	// Wait signals
+	// Wait for signals.
 	return system.NewSignals().Wait(log, operator)
 }

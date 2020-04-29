@@ -14,13 +14,13 @@ import (
 	"google.golang.org/grpc/metadata"
 )
 
-// Client provides access to the service using client connection
+// Client provides access to the service using client connection.
 type Client struct {
 	cl  *client.Client
 	log *zap.Logger
 }
 
-// New gives a Client
+// New gives a Client.
 func New(cfg *client.Config, log *zap.Logger) (*Client, error) {
 	// Set up a connection to the server.
 	// Create new gRPC client
@@ -35,7 +35,7 @@ func New(cfg *client.Config, log *zap.Logger) (*Client, error) {
 	}, nil
 }
 
-// Info command
+// Info command.
 func (c *Client) Info(ctx context.Context) error {
 	// Set up a connection to the server.
 	info, err := info.NewInfoClient(c.cl.Connection()).
@@ -54,7 +54,7 @@ func (c *Client) Info(ctx context.Context) error {
 	return nil
 }
 
-// Ping command
+// Ping command.
 func (c *Client) Ping(ctx context.Context, message string, count int) error {
 	md := new(metadata.MD)
 
@@ -78,7 +78,7 @@ func (c *Client) Ping(ctx context.Context, message string, count int) error {
 	return nil
 }
 
-// Reverse command
+// Reverse command.
 func (c *Client) Reverse(ctx context.Context, message string, count int) error {
 	md := new(metadata.MD)
 
@@ -102,7 +102,7 @@ func (c *Client) Reverse(ctx context.Context, message string, count int) error {
 	return nil
 }
 
-// Shutdown closes active Client connections
+// Shutdown closes active Client connections.
 func (c *Client) Shutdown(ctx context.Context) error {
 	return c.cl.Shutdown(ctx)
 }

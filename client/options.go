@@ -15,7 +15,7 @@ import (
 )
 
 // DialOptions gives options that manage TLS options,
-// retries and exponential backoff in calls to a service
+// retries and exponential backoff in calls to a service.
 func DialOptions(cfg *Config, opts ...grpc.DialOption) []grpc.DialOption {
 	tlsOption := grpc.WithTransportCredentials(credentials.NewTLS(
 		&tls.Config{
@@ -66,7 +66,7 @@ func (tokenAuth) RequireTransportSecurity() bool {
 	return true
 }
 
-// TokenOption gives gRPC token option
+// TokenOption gives gRPC token option.
 func TokenOption(active bool, path string) grpc.DialOption {
 	if !active {
 		return new(grpc.EmptyDialOption)

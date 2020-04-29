@@ -82,20 +82,20 @@
       "properties": {
         "content": {
           "type": "string",
-          "title": "Content of the request"
+          "description": "Content of the request."
         }
       },
-      "title": "A Request message"
+      "description": "A Request message."
     },
     "echoResponse": {
       "type": "object",
       "properties": {
         "content": {
           "type": "string",
-          "title": "Content of the response"
+          "description": "Content of the response."
         }
       },
-      "title": "A Response message"
+      "description": "A Response message."
     },
     "protobufAny": {
       "type": "object",

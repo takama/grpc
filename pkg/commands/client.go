@@ -1,4 +1,4 @@
-// Package commands contains global variables with configs and commands
+// Package commands contains global variables with configs and commands.
 // nolint: gochecknoglobals, gochecknoinits
 package commands
 
@@ -10,7 +10,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-// clientCmd represents the client command
+// clientCmd represents the client command.
 var clientCmd = &cobra.Command{
 	Use:   "client",
 	Short: "Client commands",

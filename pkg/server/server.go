@@ -14,7 +14,7 @@ import (
 	"google.golang.org/grpc/health/grpc_health_v1"
 )
 
-// Server contains core functionality of the service
+// Server contains core functionality of the service.
 type Server struct {
 	cfg *Config
 	log *zap.Logger
@@ -25,7 +25,7 @@ type Server struct {
 	es  *echoServer
 }
 
-// New creates a new core server
+// New creates a new core server.
 func New(ctx context.Context, cl *client.Client, cfg *Config, log *zap.Logger) (*Server, error) {
 	return &Server{
 		cfg: cfg,
@@ -37,17 +37,17 @@ func New(ctx context.Context, cl *client.Client, cfg *Config, log *zap.Logger) (
 	}, nil
 }
 
-// LivenessProbe returns liveness probe of the server
+// LivenessProbe returns liveness probe of the server.
 func (s Server) LivenessProbe() error {
 	return nil
 }
 
-// ReadinessProbe returns readiness probe for the server
+// ReadinessProbe returns readiness probe for the server.
 func (s Server) ReadinessProbe() error {
 	return nil
 }
 
-// Run starts the server
+// Run starts the server.
 func (s *Server) Run(ctx context.Context) error {
 	// Register gRPC server
 	s.srv = grpc.NewServer(Options(s.cfg)...)
@@ -63,7 +63,7 @@ func (s *Server) Run(ctx context.Context) error {
 	return s.srv.Serve(listener)
 }
 
-// Shutdown process graceful shutdown for the server
+// Shutdown process graceful shutdown for the server.
 func (s Server) Shutdown(ctx context.Context) error {
 	if s.srv != nil {
 		s.srv.GracefulStop()
