@@ -1,4 +1,10 @@
-# Version v0.1.5
+# Version v0.1.7
+
+## v0.1.7
+
+### Codebase changes in v0.1.7
+
+- New versions of protobuf generator ([takama](https://github.com/takama))
 
 ## v0.1.5
 
