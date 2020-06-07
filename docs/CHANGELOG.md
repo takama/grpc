@@ -1,4 +1,10 @@
-# Version v0.1.7
+# Version v0.1.8
+
+## v0.1.8
+
+### Codebase changes in v0.1.8
+
+- New versions of protobuf, grpc, grpc-gateway ([takama](https://github.com/takama))
 
 ## v0.1.7
 
